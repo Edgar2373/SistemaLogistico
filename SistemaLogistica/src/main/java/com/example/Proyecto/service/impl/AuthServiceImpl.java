@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService{
 
         String token = jwtService.generateToken(usuario.getUsuario());
 
-        return new AuthResponse(token);
+        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario());
     }
 
     @Override
@@ -46,7 +46,8 @@ public class AuthServiceImpl implements AuthService{
 
         Usuario usuario = usuarioRepository
                 .findByUsuario(request.getUsuario())
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
+
 
         boolean passwordCorrecto = passwordEncoder.matches(
                 request.getPassword(),
@@ -59,6 +60,6 @@ public class AuthServiceImpl implements AuthService{
 
         String token = jwtService.generateToken(usuario.getUsuario());
 
-        return new AuthResponse(token);
+        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario());
     }
 }
