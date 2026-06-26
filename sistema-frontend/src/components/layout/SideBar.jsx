@@ -1,39 +1,73 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-function Sidebar() {
+// Items del menú de navegación del sidebar
+const menuItems = [
+  { label: "Dashboard", icon: "dashboard", path: "/admin" },
+  { label: "Usuarios", icon: "group", path: "/usuarios" },
+  { label: "Pedidos", icon: "shopping_cart", path: "/pedidos" },
+  { label: "Clientes", icon: "groups", path: "/clientes" },
+  { label: "Productos", icon: "inventory_2", path: "/productos" },
+  { label: "Repartidores", icon: "sports_motorsports", path: "/repartidores" },
+  { label: "Vehículos", icon: "local_shipping", path: "/vehiculos" },
+  { label: "Rutas", icon: "route", path: "/rutas" },
+  { label: "Categorías", icon: "category", path: "/categorias" },
+  { label: "Boletas", icon: "receipt", path: "/boletas" },
+  { label: "Pagos", icon: "payments", path: "/pagos" },
+];
+
+function SideBar() {
+  const location = useLocation();
 
   return (
+    <aside className="fixed left-0 top-0 h-full w-[260px] flex flex-col bg-inverse-surface border-r border-outline-variant z-50">
 
-    <div className="w-64 bg-gray-900 text-white min-h-screen">
+      {/* Logo */}
+      <div className="p-lg">
+        <h1 className="text-headline-md font-bold text-on-primary">LogiFlow</h1>
+        <p className="text-label-md text-outline-variant uppercase tracking-widest mt-1">Fleet Management</p>
+      </div>
 
-      <h2 className="text-center text-2xl py-5 font-bold">
-        ADMIN
-      </h2>
+      {/* Navegación principal */}
+      <nav className="flex-1 px-base overflow-y-auto mt-4">
+        <ul className="space-y-1">
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 transition-all duration-150 ${
+                    isActive
+                      ? "bg-primary-container text-on-primary-container border-l-4 border-primary"
+                      : "text-outline-variant hover:bg-surface-variant hover:text-on-surface-variant"
+                  }`}
+                >
+                  <span className="material-symbols-outlined">{item.icon}</span>
+                  <span className="font-label-md text-label-md">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      <ul>
+      {/* Footer del sidebar */}
+      <div className="mt-auto border-t border-outline-variant/20 p-base">
+        <a className="flex items-center gap-3 text-outline-variant hover:text-on-primary px-4 py-3 transition-colors" href="#">
+          <span className="material-symbols-outlined">help</span>
+          <span className="font-label-md text-label-md">Help Center</span>
+        </a>
+        <button
+          onClick={() => { localStorage.clear(); window.location.href = "/login"; }}
+          className="flex items-center gap-3 text-outline-variant hover:text-on-primary px-4 py-3 transition-colors w-full"
+        >
+          <span className="material-symbols-outlined">logout</span>
+          <span className="font-label-md text-label-md">Logout</span>
+        </button>
+      </div>
 
-        <li className="p-4 hover:bg-gray-700">
-          <Link to="/admin">
-            Dashboard
-          </Link>
-        </li>
-
-        <li className="p-4 hover:bg-gray-700">
-          <Link to="/usuarios">
-            Usuarios
-          </Link>
-        </li>
-
-        <li className="p-4 hover:bg-gray-700">
-          <Link to="/pedidos">
-            Pedidos
-          </Link>
-        </li>
-
-      </ul>
-
-    </div>
+    </aside>
   );
 }
 
-export default Sidebar;
+export default SideBar;

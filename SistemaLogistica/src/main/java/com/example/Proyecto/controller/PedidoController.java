@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Hidden
 @RestController
 @RequestMapping("/pedidos")
-@CrossOrigin("*")
 public class PedidoController {
 
     @Autowired

@@ -6,6 +6,8 @@ import Registro from "./pages/auth/Registro";
 
 // Páginas de admin
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
+// Layout admin
+import LayoutAdmin from "./components/layout/LayoutAdmin";
 
 
 // Componente de ruta protegida
@@ -23,17 +25,18 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
 
-        {/* Rutas protegidas (requieren token) */}
+        {/* Rutas admin protegidas — envueltas en LayoutAdmin */}
         <Route
           path="/admin"
           element={
             <PrivateRoute>
-              <DashboardAdmin />
+              <LayoutAdmin />
             </PrivateRoute>
           }
-        />
-
-      
+        >
+          <Route index element={<DashboardAdmin />} />
+        </Route>
+ 
 
         {/* Ruta para repartidores */}
         <Route

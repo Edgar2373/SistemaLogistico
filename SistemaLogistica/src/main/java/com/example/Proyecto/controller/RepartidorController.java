@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/repartidores")
-@CrossOrigin("*")
 public class RepartidorController {
 
     @Autowired

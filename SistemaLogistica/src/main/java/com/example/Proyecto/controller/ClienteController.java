@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/clientes")
-@CrossOrigin("*")
 public class ClienteController {
 
     @Autowired

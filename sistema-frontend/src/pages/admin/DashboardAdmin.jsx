@@ -1,9 +1,21 @@
-import React from 'react'
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
+import MetricsSection from "../../components/dashboard/MetricsSection";
+import WeeklyChart from "../../components/dashboard/WeeklyChart";
+import QuickAccess from "../../components/dashboard/QuickAccess";
+import RecentOrdersTable from "../../components/dashboard/RecentOrdersTable";
 
-export default function DashboardAdmin() {
+function DashboardAdmin() {
   return (
-    <div>
-      <h1>Hola ADMIN</h1>
-    </div>
-  )
+    <>
+      <DashboardHeader />
+      <MetricsSection />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+        <WeeklyChart />
+        <QuickAccess />
+      </div>
+      <RecentOrdersTable />
+    </>
+  );
 }
+
+export default DashboardAdmin;
