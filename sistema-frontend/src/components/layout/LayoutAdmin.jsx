@@ -15,7 +15,7 @@ function LayoutAdmin() {
         </div>
 
         <footer className="p-lg text-center text-label-md text-outline">
-          © 2026 LogiFlow Fleet Management Systems. All rights reserved.
+          © 2026 LogiFlow Fleet Management Systems. Todos los derechos reservados.
         </footer>
       </main>
     </div>

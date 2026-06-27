@@ -19,7 +19,7 @@ function TopBar() {
       </div>
 
       {/* Acciones derecha */}
-      <div className="flex items-center gap-xl">
+      <div className="flex items-center gap-3">
         <div className="flex gap-md">
           <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
             notifications
@@ -30,9 +30,9 @@ function TopBar() {
         </div>
 
         {/* Avatar usuario */}
-        <div className="flex items-center gap-sm cursor-pointer group">
+        <div className="flex items-center gap-1 cursor-pointer group">
           <div className="text-right hidden sm:block">
-            <p className="font-label-md text-on-surface">{nombre}</p>
+            <p className="font-bold text-on-surface">{nombre}</p>
             <p className="text-[10px] text-outline">Super Admin</p>
           </div>
           <img

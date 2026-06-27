@@ -6,6 +6,7 @@ import Registro from "./pages/auth/Registro";
 
 // Páginas de admin
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
+import Usuarios from "./pages/admin/Usuarios";
 // Layout admin
 import LayoutAdmin from "./components/layout/LayoutAdmin";
 
@@ -35,6 +36,17 @@ function App() {
           }
         >
           <Route index element={<DashboardAdmin />} />
+        </Route>
+
+        <Route
+          path="/usuarios"
+          element={
+            <PrivateRoute>
+              <LayoutAdmin />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Usuarios />} />
         </Route>
  
 

@@ -22,10 +22,10 @@ public class UsuarioController {
         return usuarioService.listar();
     }
 
-  /*  @PostMapping
+    @PostMapping
     public Usuario guardar(@Valid @RequestBody Usuario usuario) {
         return usuarioService.guardar(usuario);
-    }*/
+    }
 
     @GetMapping("/{id}")
     public Usuario buscarPorId(@PathVariable Integer id) {
