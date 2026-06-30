@@ -15,29 +15,31 @@ function NuevoUsuarioModal({ isOpen, onClose, onSave, usuario = null }) {
 
   // Sync state with selected user when editing
   useEffect(() => {
-    if (usuario) {
-      setFormData({
-        nombre: usuario.nombre || "",
-        usuario: usuario.usuario || "",
-        email: usuario.email || "",
-        telefono: usuario.telefono || "",
-        rol: usuario.rol || "OPERADOR",
-        password: "", // Don't preload hash
-        estadoUsuario: usuario.estadoUsuario || "Activo",
-      });
-    } else {
-      setFormData({
-        nombre: "",
-        usuario: "",
-        email: "",
-        telefono: "",
-        rol: "OPERADOR",
-        password: "",
-        estadoUsuario: "Activo",
-      });
-    }
-    setError("");
-    setGuardando(false);
+    queueMicrotask(() => {
+      if (usuario) {
+        setFormData({
+          nombre: usuario.nombre || "",
+          usuario: usuario.usuario || "",
+          email: usuario.email || "",
+          telefono: usuario.telefono || "",
+          rol: usuario.rol || "OPERADOR",
+          password: "", // Don't preload hash
+          estadoUsuario: usuario.estadoUsuario || "Activo",
+        });
+      } else {
+        setFormData({
+          nombre: "",
+          usuario: "",
+          email: "",
+          telefono: "",
+          rol: "OPERADOR",
+          password: "",
+          estadoUsuario: "Activo",
+        });
+      }
+      setError("");
+      setGuardando(false);
+    });
   }, [usuario, isOpen]);
 
   if (!isOpen) return null;

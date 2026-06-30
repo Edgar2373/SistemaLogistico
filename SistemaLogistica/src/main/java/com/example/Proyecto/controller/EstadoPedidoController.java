@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estado-pedido")
-@CrossOrigin("*")
 public class EstadoPedidoController {
 
     @Autowired

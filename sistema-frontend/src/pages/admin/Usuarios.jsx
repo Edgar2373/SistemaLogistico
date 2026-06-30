@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import UsuariosHeader from "../../components/usuarios/UsuariosHeader";
 import StatsSection from "../../components/usuarios/StatsSection";
 import UsuariosTable from "../../components/usuarios/UsuariosTable";
@@ -37,7 +37,7 @@ function Usuarios() {
   };
 
   // Cargar usuarios de la API
-  const cargarUsuarios = async () => {
+  const cargarUsuarios = useCallback(async () => {
     setCargando(true);
     setErrorCargar("");
     try {
@@ -49,17 +49,14 @@ function Usuarios() {
     } finally {
       setCargando(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    cargarUsuarios();
-  }, []);
+    queueMicrotask(cargarUsuarios);
+  }, [cargarUsuarios]);
 
   // Filtrado de usuarios
   const usuariosFiltrados = usuarios.filter((usr) => {
-    // Normalizar estados para evitar discrepancias de mayúsculas/minúsculas ("Activo" vs "ACTIVO")
-    const estado = (usr.estadoUsuario || "").toUpperCase();
-
     // Filtrado por rol
     const cumpleRol = roleFilter ? usr.rol === roleFilter : true;
 

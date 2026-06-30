@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 @RestController
 @RequestMapping("/pagos")
-@CrossOrigin("*")
 public class PagoController {
 
     @Autowired

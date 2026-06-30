@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 @RestController
 @RequestMapping("/detalle-pedido")
-@CrossOrigin("*")
 public class DetallePedidoController {
 
     @Autowired
