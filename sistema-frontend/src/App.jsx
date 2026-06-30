@@ -8,6 +8,9 @@ import Registro from "./pages/auth/Registro";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 
 
+import Usuarios from "./pages/admin/Usuarios";
+import Repartidores from "./pages/admin/Repartidores";
+
 // Componente de ruta protegida
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -25,15 +28,23 @@ function App() {
 
         {/* Rutas protegidas (requieren token) */}
         <Route
-          path="/admin"
           element={
             <PrivateRoute>
               <DashboardAdmin />
             </PrivateRoute>
           }
+<<<<<<< Updated upstream
         />
 
       
+=======
+        >
+          <Route path="/admin" element={<DashboardAdmin />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/repartidores" element={<Repartidores />} />
+        </Route>
+
+>>>>>>> Stashed changes
 
         {/* Ruta para repartidores */}
         <Route
