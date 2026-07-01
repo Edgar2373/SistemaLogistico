@@ -15,20 +15,33 @@ const menuItems = [
   { label: "Pagos", icon: "payments", path: "/pagos" },
 ];
 
-function SideBar() {
+function SideBar({ sidebarOpen, onClose}) {
   const location = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-[260px] flex flex-col bg-inverse-surface border-r border-outline-variant z-50">
-
-      {/* Logo */}
-      <div className="p-lg">
-        <h1 className="text-headline-md font-bold text-on-primary">LogiFlow</h1>
-        <p className="text-label-md text-outline-variant uppercase tracking-widest mt-1">Fleet Management</p>
+     <aside
+      className={`fixed left-0 top-0 h-full w-[260px] flex flex-col bg-inverse-surface border-r border-outline-variant z-50 transition-transform duration-300 md:translate-x-0 ${
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
+      {/* Logo + botón cerrar móvil */}
+      <div className="p-2 flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-on-primary">LogiFlow</h1>
+          <p className="text-sm font-medium text-outline-variant uppercase tracking-widest mt-1">Fleet Management</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="md:hidden text-on-primary hover:bg-surface-variant rounded-full p-1"
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </div>
 
+
+
       {/* Navegación principal */}
-      <nav className="flex-1 px-base overflow-y-auto mt-4">
+      <nav className="flex-1 px-4 overflow-y-auto mt-4">
         <ul className="space-y-1">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -43,7 +56,7 @@ function SideBar() {
                   }`}
                 >
                   <span className="material-symbols-outlined">{item.icon}</span>
-                  <span className="font-label-md text-label-md">{item.label}</span>
+                  <span className="font-medium text-sm">{item.label}</span>
                 </Link>
               </li>
             );
@@ -52,17 +65,17 @@ function SideBar() {
       </nav>
 
       {/* Footer del sidebar */}
-      <div className="mt-auto border-t border-outline-variant/20 p-base">
+      <div className="mt-auto border-t border-outline-variant/20 p-4">
         <a className="flex items-center gap-3 text-outline-variant hover:text-on-primary px-4 py-3 transition-colors" href="#">
           <span className="material-symbols-outlined">help</span>
-          <span className="font-label-md text-label-md">Help Center</span>
+          <span className="font-medium text-sm">Help Center</span>
         </a>
         <button
           onClick={() => { localStorage.clear(); window.location.href = "/login"; }}
           className="flex items-center gap-3 text-outline-variant hover:text-on-primary px-4 py-3 transition-colors w-full"
         >
           <span className="material-symbols-outlined">logout</span>
-          <span className="font-label-md text-label-md">Logout</span>
+          <span className="font-medium text-sm">Logout</span>
         </button>
       </div>
 

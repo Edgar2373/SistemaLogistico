@@ -48,8 +48,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 relative overflow-hidden p-4">
       
       {/* Fondos decorativos */}
-      <div className="absolute top-[-10%] right-[-10%] w-[40rem] h-[40rem] rounded-full bg-blue-200 blur-[120px] opacity-40"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[30rem] h-[30rem] rounded-full bg-cyan-200 blur-[100px] opacity-40"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-[20rem] sm:w-[30rem] md:w-[40rem] h-[20rem] sm:h-[30rem] md:h-[40rem] rounded-full bg-blue-200 blur-[120px] opacity-40"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[15rem] sm:w-[20rem] md:w-[30rem] h-[15rem] sm:h-[20rem] md:h-[30rem] rounded-full bg-cyan-200 blur-[100px] opacity-40"></div>
 
       <main className="relative z-10 w-full max-w-md">
 
@@ -58,7 +58,7 @@ export default function Login() {
           <span className="material-symbols-outlined text-[56px] text-blue-600">
             local_shipping
           </span>
-          <h1 className="text-4xl font-extrabold text-gray-800 mt-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mt-2">
             LogiFlow
           </h1>
           <p className="text-gray-500 mt-1">
@@ -67,7 +67,7 @@ export default function Login() {
         </div>
 
         {/* Card Login */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-8">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-6 sm:p-8">
 
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-800">

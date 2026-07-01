@@ -26,16 +26,16 @@ function WeeklyChart() {
   }, []);
 
   return (
-    <div className="lg:col-span-2 bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm px-4 py-4 gap-6">
-      <div className="flex justify-between items-center mb-lg">
+    <div className="lg:col-span-2 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm px-3 py-3 sm:px-4 sm:py-4 gap-6">
+      <div className="flex justify-between items-center mb-6">
         <h4 className="font-bold text-xl text-on-surface">Entregas Semanales</h4>
-        <select className="bg-surface-container-low border-none rounded-lg text-label-md focus:ring-primary">
+        <select className="bg-surface-container-low border-none rounded-lg text-sm font-medium focus:ring-primary">
           <option>Últimos 7 días</option>
           <option>Último mes</option>
         </select>
       </div>
 
-      <div ref={chartRef} className="h-64 flex items-end justify-between gap-2 px-2">
+      <div ref={chartRef} className="h-48 sm:h-64 flex items-end justify-between gap-1 sm:gap-2 px-2">
         {dias.map((dia) => (
           <div key={dia.label} className="flex-1 flex flex-col items-center gap-2">
             <div className="w-full bg-primary-container/20 rounded-t-lg relative group">
@@ -48,7 +48,7 @@ function WeeklyChart() {
                 </div>
               </div>
             </div>
-            <span className="text-label-md text-outline">{dia.label}</span>
+            <span className="text-xs sm:text-sm sm:font-medium text-outline">{dia.label}</span>
           </div>
         ))}
       </div>

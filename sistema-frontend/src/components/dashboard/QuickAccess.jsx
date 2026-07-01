@@ -9,9 +9,9 @@ const accesos = [
 
 function QuickAccess() {
   return (
-    <div className="space-y-lg px-6 py-4">
-      <h4 className="font-bold text-xl text-on-surface">Accesos Directos</h4>
-      <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-6 px-4 py-3 sm:px-6 sm:py-4">
+      <h4 className="font-bold text-lg sm:text-xl text-on-surface">Accesos Directos</h4>
+      <div className="grid grid-cols-1 gap-3 sm:gap-4">
         {accesos.map((acceso) => (
           <Link
             key={acceso.path}
@@ -22,7 +22,7 @@ function QuickAccess() {
               <span className="material-symbols-outlined p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-white/20 group-hover:text-white">
                 {acceso.icon}
               </span>
-              <span className="font-label-md">{acceso.label}</span>
+              <span className="font-medium">{acceso.label}</span>
             </div>
             <span className="material-symbols-outlined text-outline group-hover:text-white">chevron_right</span>
           </Link>

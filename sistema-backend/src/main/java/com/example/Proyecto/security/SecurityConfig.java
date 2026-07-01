@@ -65,7 +65,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // <-- AGREGADOOO
+    // <-- AGREGADO :
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

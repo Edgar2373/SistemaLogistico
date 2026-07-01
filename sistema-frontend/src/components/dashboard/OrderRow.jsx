@@ -11,9 +11,9 @@ function OrderRow({ id, cliente, repartidor, avatar, estado, tiempo }) {
 
   return (
     <tr className="hover:bg-surface-container-low transition-colors">
-      <td className="px-lg py-4 font-bold text-on-surface">{id}</td>
-      <td className="px-lg py-4">{cliente}</td>
-      <td className="px-lg py-4 flex items-center gap-2">
+      <td className="px-3 sm:px-6 py-4 font-bold text-on-surface">{id}</td>
+      <td className="px-3 sm:px-6 py-4">{cliente}</td>
+      <td className="px-3 sm:px-6 py-4 flex items-center gap-2 hidden md:table-cell">
         {avatar ? (
           <img className="w-6 h-6 rounded-full" src={avatar} alt={repartidor} />
         ) : (
@@ -21,11 +21,11 @@ function OrderRow({ id, cliente, repartidor, avatar, estado, tiempo }) {
         )}
         {repartidor}
       </td>
-      <td className="px-lg py-4">
-        <span className={`px-2 py-1 rounded ${colores.bg} ${colores.text} font-label-md`}>{estado}</span>
+      <td className="px-3 sm:px-6 py-4">
+        <span className={`px-2 py-1 rounded ${colores.bg} ${colores.text} font-medium`}>{estado}</span>
       </td>
-      <td className="px-lg py-4 text-outline">{tiempo}</td>
-      <td className="px-lg py-4">
+      <td className="px-3 sm:px-6 py-4 text-outline hidden sm:table-cell">{tiempo}</td>
+      <td className="px-3 sm:px-6 py-4">
         <button className="material-symbols-outlined text-outline hover:text-primary">visibility</button>
       </td>
     </tr>

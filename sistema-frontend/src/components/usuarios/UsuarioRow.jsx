@@ -13,8 +13,8 @@ function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEdita
 
   return (
     <tr className="hover:bg-surface-container-lowest transition-colors h-12">
-      <td className="px-4 py-3 font-table-data text-on-surface font-semibold">#{id}</td>
-      <td className="px-lg py-3 font-table-data">
+      <td className="px-2 sm:px-4 py-3 text-sm text-on-surface font-semibold hidden sm:table-cell">#{id}</td>
+      <td className="px-3 sm:px-6 py-3 text-sm">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-full ${colorAvatar} flex items-center justify-center text-xs font-bold`}>
             {iniciales}
@@ -22,13 +22,13 @@ function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEdita
           <span>{nombre}</span>
         </div>
       </td>
-      <td className="px-lg py-3 font-table-data">{usuario}</td>
-      <td className="px-lg py-3 font-table-data text-on-surface-variant">{email}</td>
-      <td className="px-lg py-3 font-table-data">{telefono}</td>
-      <td className="px-lg py-3 font-table-data">
+      <td className="px-3 sm:px-6 py-3 text-sm">{usuario}</td>
+      <td className="px-3 sm:px-6 py-3 text-sm text-on-surface-variant hidden md:table-cell">{email}</td>
+      <td className="px-3 sm:px-6 py-3 text-sm hidden lg:table-cell">{telefono}</td>
+      <td className="px-3 sm:px-6 py-3 text-sm">
         <span className="px-2 py-1 bg-surface-variant text-on-surface-variant rounded text-xs font-bold">{rol}</span>
       </td>
-      <td className="px-lg py-3 font-table-data">
+      <td className="px-3 sm:px-6 py-3 text-sm hidden md:table-cell">
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
           estado === "ACTIVO"
             ? "bg-[#43A047]/10 text-[#43A047]"
@@ -40,7 +40,7 @@ function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEdita
           {estado === "ACTIVO" ? "Activo" : "Inactivo"}
         </span>
       </td>
-      <td className="px-lg py-3 text-right">
+      <td className="px-3 sm:px-6 py-3 text-right">
         <div className="flex justify-end gap-2">
           <button onClick={onEditar} className="p-2 text-primary hover:bg-primary-fixed rounded transition-colors" title="Editar">
             <span className="material-symbols-outlined text-xl">edit</span>

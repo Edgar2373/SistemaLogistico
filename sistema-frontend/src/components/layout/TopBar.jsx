@@ -1,17 +1,25 @@
 import { useState } from "react";
 
-function TopBar() {
+function TopBar({ onToggleSidebar }) {
   const nombre = localStorage.getItem("nombre") || "Admin User";
 
   return (
-    <header className="h-16 w-full px-lg flex justify-between items-center bg-surface border-b border-outline-variant sticky top-0 z-40">
+    <header className="h-16 w-full px-4 md:px-6 flex justify-between items-center bg-surface border-b border-outline-variant sticky top-0 z-40">
+
+      {/* Botón hamburguesa — solo móvil */}
+      <button
+        onClick={onToggleSidebar}
+        className="md:hidden material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors"
+      >
+        menu
+      </button>
 
       {/* Barra de búsqueda */}
-      <div className="flex items-center gap-4 flex-1">
+      <div className="flex items-center gap-4 flex-1 ml-2 md:ml-0">
         <div className="relative w-full max-w-md">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
           <input
-            className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary"
+            className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-base focus:ring-2 focus:ring-primary"
             placeholder="Buscar pedidos, conductores..."
             type="text"
           />
@@ -20,7 +28,7 @@ function TopBar() {
 
       {/* Acciones derecha */}
       <div className="flex items-center gap-3">
-        <div className="flex gap-md">
+        <div className="flex gap-4">
           <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
             notifications
           </button>

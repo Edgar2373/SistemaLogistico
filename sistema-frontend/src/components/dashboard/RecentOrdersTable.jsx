@@ -10,23 +10,23 @@ const pedidosRecientes = [
 function RecentOrdersTable() {
   return (
     <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden px-4 py-4">
-      <div className="p-lg border-b border-outline-variant flex justify-between items-center">
-        <h4 className="font-bold text-xl text-on-surface py-2">Pedidos Recientes</h4>
+      <div className="p-4 sm:p-6 border-b border-outline-variant flex justify-between items-center">
+        <h4 className="font-bold text-lg sm:text-xl text-on-surface py-2">Pedidos Recientes</h4>
         <button className="text-primary font-bold text-xl hover:underline">Ver todo</button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-surface-container text-label-md text-on-surface-variant">
-              <th className="px-lg py-3">ID Pedido</th>
-              <th className="px-lg py-3">Cliente</th>
-              <th className="px-lg py-3">Repartidor</th>
-              <th className="px-lg py-3">Estado</th>
-              <th className="px-lg py-3">Tiempo</th>
-              <th className="px-lg py-3">Acción</th>
+            <tr className="bg-surface-container text-sm font-medium text-on-surface-variant">
+              <th className="px-6 py-3">ID Pedido</th>
+              <th className="px-6 py-3">Cliente</th>
+              <th className="px-6 py-3 hidden md:table-cell">Repartidor</th>
+              <th className="px-6 py-3">Estado</th>
+              <th className="px-6 py-3 hidden sm:table-cell">Tiempo</th>
+              <th className="px-6 py-3">Acción</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-outline-variant text-table-data">
+          <tbody className="divide-y divide-outline-variant text-sm">
             {pedidosRecientes.map((pedido) => (
               <OrderRow key={pedido.id} {...pedido} />
             ))}

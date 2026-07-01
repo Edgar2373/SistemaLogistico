@@ -2,7 +2,7 @@ import MetricCard from "./MetricCard";
 
 function MetricsSection() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
       <MetricCard
         titulo="Pedidos Hoy"
         valor="24"
@@ -30,7 +30,7 @@ function MetricsSection() {
         icono="person_pin_circle"
         colorIcono="text-secondary"
       >
-        <span className="text-on-surface-variant font-label-md">de 12 total</span>
+        <span className="text-on-surface-variant font-medium">de 12 total</span>
       </MetricCard>
     </div>
   );

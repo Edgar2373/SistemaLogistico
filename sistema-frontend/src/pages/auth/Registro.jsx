@@ -117,7 +117,7 @@ export default function Registro() {
                 LogiFlow
               </h1>
             </div>
-            <h2 className="text-4xl font-bold leading-tight mb-5">
+            <h2 className="text-3xl sm:text-4xl font-bold leading-tight mb-5">
               Optimice su cadena de suministro hoy.
             </h2>
             <p className="text-slate-300">
@@ -137,7 +137,7 @@ export default function Registro() {
           <div className="max-w-md mx-auto">
 
             <div className="mb-8">
-              <h3 className="text-3xl font-bold text-slate-800">
+              <h3 className="text-2xl sm:text-3xl font-bold text-slate-800">
                 Crear cuenta nueva
               </h3>
               <p className="text-slate-500 mt-2">

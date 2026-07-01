@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../../api/axiosConfig";
+import { getUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } from "../../services/usuarioService";
 import UsuariosHeader from "../../components/usuarios/UsuariosHeader";
 import StatsSection from "../../components/usuarios/StatsSection";
 import UsuariosTable from "../../components/usuarios/UsuariosTable";
@@ -25,9 +25,9 @@ function Usuarios() {
 
   const cargarUsuarios = async () => {
     try {
-      const response = await api.get("/usuarios");
-      setUsuarios(response.data);
-      setTotalPaginas(Math.ceil(response.data.length / 10));
+      const data = await getUsuarios();
+      setUsuarios(data);
+      setTotalPaginas(Math.ceil(data.length / 10));
     } catch (error) {
       console.error("Error al cargar usuarios:", error);
     }
@@ -50,6 +50,7 @@ function Usuarios() {
   const inactivos = usuarios.filter((u) => u.estadoUsuario !== "ACTIVO").length;
   const pendientes = 0;
 
+
   // CREAR
   const handleGuardarNuevo = async (e) => {
     e.preventDefault();
@@ -64,7 +65,7 @@ function Usuarios() {
       estadoUsuario: "ACTIVO",
     };
     try {
-      await api.post("/usuarios", nuevoUsuario);
+      await crearUsuario(nuevoUsuario);
       setModalNuevo(false);
       cargarUsuarios();
     } catch (error) {
@@ -96,7 +97,7 @@ function Usuarios() {
       datosActualizados.passwordHash = password;
     }
     try {
-      await api.put(`/usuarios/${usuarioSeleccionado.idUsuario}`, datosActualizados);
+      await actualizarUsuario(usuarioSeleccionado.idUsuario, datosActualizados);
       setModalEditar(false);
       setUsuarioSeleccionado(null);
       cargarUsuarios();
@@ -113,7 +114,7 @@ function Usuarios() {
 
   const confirmarEliminar = async () => {
     try {
-      await api.delete(`/usuarios/${usuarioSeleccionado.idUsuario}`);
+      await eliminarUsuario(usuarioSeleccionado.idUsuario);
       setModalEliminar(false);
       setUsuarioSeleccionado(null);
       cargarUsuarios();

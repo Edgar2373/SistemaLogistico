@@ -2,13 +2,13 @@ function ConfirmDeleteModal({ visible, onClose, onConfirmar, nombreUsuario }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-lg modal-overlay">
-      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 text-center">
-        <div className="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-md">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 modal-overlay">
+      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-4 sm:p-6 text-center">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="material-symbols-outlined text-4xl">warning</span>
         </div>
-        <h3 className="text-headline-sm font-bold text-on-surface">¿Eliminar usuario?</h3>
-        <p className="text-body-md text-on-surface-variant mt-2 mb-2">
+        <h3 className="text-xl font-bold text-on-surface">¿Eliminar usuario?</h3>
+        <p className="text-base text-on-surface-variant mt-2 mb-2">
           Esta acción es permanente y revocará inmediatamente todos los accesos de <strong>{nombreUsuario}</strong> al sistema LogiFlow.
         </p>
         <div className="flex flex-col gap-2">

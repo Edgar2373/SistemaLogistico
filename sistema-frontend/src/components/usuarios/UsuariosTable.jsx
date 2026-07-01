@@ -7,14 +7,14 @@ function UsuariosTable({ usuarios, onEditar, onEliminar, paginaActual, totalPagi
         <table className="w-full text-left border-collapse">
           <thead className="bg-surface-container-low border-b border-outline-variant">
             <tr>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">ID</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Nombre</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Usuario</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Email</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Teléfono</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Rol</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider">Estado</th>
-              <th className="px-2 py-4 font-label-md text-on-surface-variant uppercase tracking-wider text-right">Acciones</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider hidden sm:table-cell">ID</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider">Nombre</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider">Usuario</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Email</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider hidden lg:table-cell">Teléfono</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider">Rol</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Estado</th>
+              <th className="px-2 py-4 font-medium text-sm text-on-surface-variant uppercase tracking-wider text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-outline-variant/40">
@@ -37,11 +37,11 @@ function UsuariosTable({ usuarios, onEditar, onEliminar, paginaActual, totalPagi
       </div>
 
       {/* Paginación */}
-      <div className="px-6 py-4 flex items-center justify-between bg-surface border-t border-outline-variant">
-        <p className="text-label-md text-on-surface-variant">
+      <div className="px-4 py-3 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface border-t border-outline-variant">
+        <p className="text-xs sm:text-sm sm:font-medium text-on-surface-variant">
           Mostrando <span className="font-bold text-on-surface">{(paginaActual - 1) * 10 + 1} - {Math.min(paginaActual * 10, usuarios.length)}</span> de <span className="font-bold text-on-surface">{usuarios.length}</span> usuarios
         </p>
-        <div className="flex items-center gap-base">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => onCambioPagina(paginaActual - 1)}
             disabled={paginaActual === 1}
