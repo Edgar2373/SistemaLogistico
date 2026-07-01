@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import Login from "./pages/auth/Login";
 import Registro from "./pages/auth/Registro";
@@ -6,6 +6,7 @@ import Registro from "./pages/auth/Registro";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import Usuarios from "./pages/admin/Usuarios";
 import Clientes from "./pages/admin/Clientes";
+import Repartidores from "./pages/admin/Repartidores";
 
 import PanelRepartidor from "./pages/repartidor/PanelRepartidor";
 import LayoutAdmin from "./components/layout/LayoutAdmin";
@@ -42,6 +43,15 @@ function App() {
           </PrivateRoute>}>
           <Route index element={<Clientes />} />
         </Route>
+
+        <Route path="/repartidores" element={
+          <PrivateRoute rolesPermitidos={adminRoles}>
+            <LayoutAdmin />
+          </PrivateRoute>}>
+          <Route index element={<Repartidores />} />
+        </Route>
+
+
 
 
     
