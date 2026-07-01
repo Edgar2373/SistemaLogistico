@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Para redirigir según el rol
 import { login } from "../../services/authService";
+import { useAuthContext } from "../../context/AuthContext";
+
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
@@ -10,6 +12,8 @@ export default function Login() {
   const [cargando, setCargando] = useState(false); // Estado de carga del botón
 
   const navigate = useNavigate(); // Hook para navegar entre rutas
+  const { loginUser } = useAuthContext();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,32 +21,22 @@ export default function Login() {
     setCargando(true);  // Activar estado de carga
 
     try {
-      // Llamar al servicio de login
       const data = await login(usuario, password);
+      loginUser(data);
 
-      // Guardar datos del usuario en localStorage
-      localStorage.setItem("token", data.token);     // Token JWT para auth
-      localStorage.setItem("rol", data.rol);          // Rol: ADMIN, OPERADOR, REPARTIDOR
-      localStorage.setItem("nombre", data.nombre);    // Nombre para mostrar en navbar
-      localStorage.setItem("idUsuario", data.idUsuario); // ID para consultas
-
-      // Redirigir según el rol del usuario
       if (data.rol === "ADMIN" || data.rol === "OPERADOR") {
-        navigate("/admin");      // Admin y Operador van al mismo panel
+        navigate("/admin");
       } else if (data.rol === "REPARTIDOR") {
-        navigate("/repartidor"); // Repartidor va a su panel específico
+        navigate("/repartidor");
       }
-
     } catch (err) {
-      // Obtener el mensaje de error real del backend
-      // Si el backend retorna { error: "mensaje" }, lo muestra
-      // Si no hay respuesta (servidor caído), muestra mensaje genérico
       const mensaje = err.response?.data?.error || "Error al conectar con el servidor";
       setError(mensaje);
     } finally {
-      setCargando(false); // Siempre desactivar carga, éxito o error
+      setCargando(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 relative overflow-hidden p-4">
