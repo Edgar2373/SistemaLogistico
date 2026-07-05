@@ -1,342 +1,105 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { getPedidosByRepartidor } from "../../services/pedidoService";
-
-const estados = ["TODOS", "PENDIENTE", "EN_RUTA", "ENTREGADO", "CANCELADO"];
-
-const estadoStyles = {
-    PENDIENTE: "bg-amber-50 text-amber-700 border-amber-200",
-    EN_RUTA: "bg-blue-50 text-blue-700 border-blue-200",
-    ENTREGADO: "bg-green-50 text-green-700 border-green-200",
-    CANCELADO: "bg-red-50 text-red-700 border-red-200"
-};
-
-const normalizarEstado = (pedido) => {
-    const estado =
-        pedido.estado ||
-        pedido.estadoPedido?.nombre ||
-        pedido.estadoPedido?.estado ||
-        pedido.estadoPedido?.descripcion ||
-        "PENDIENTE";
-
-    return String(estado).toUpperCase().replaceAll(" ", "_");
-};
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect } from "react";
+import { getPedidos } from "../../services/pedidoService";
 
 function PanelRepartidor() {
-    const nombre = localStorage.getItem("nombre") || "Repartidor";
-    const idRepartidor =
-        localStorage.getItem("idRepartidor") || localStorage.getItem("idUsuario") || "";
+  const [pedidos, setPedidos] = useState([]);
+  const nombre = localStorage.getItem("nombre") || "Repartidor";
 
-    const [pedidos, setPedidos] = useState([]);
-    const [cargando, setCargando] = useState(true);
-    const [error, setError] = useState("");
-    const [busqueda, setBusqueda] = useState("");
-    const [estadoFiltro, setEstadoFiltro] = useState("TODOS");
+  const cargar = async () => { try { setPedidos(await getPedidos()); } catch (e) { console.error(e); } };
 
-    const cargarPedidos = useCallback(async () => {
-        if (!idRepartidor) {
-            setPedidos([]);
-            setError("No se encontro el ID del repartidor en la sesion.");
-            setCargando(false);
-            return;
-        }
+  useEffect(() => { cargar(); }, []);
 
-        setCargando(true);
-        setError("");
+  const coloresEstado = {
+    PENDIENTE: "bg-[#FFA000]/10 text-[#FFA000]",
+    EN_RUTA: "bg-[#1976D2]/10 text-[#1976D2]",
+    ENTREGADO: "bg-[#43A047]/10 text-[#43A047]",
+    CANCELADO: "bg-[#E53935]/10 text-[#E53935]",
+  };
 
-        try {
-            const data = await getPedidosByRepartidor(idRepartidor);
-            setPedidos(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error(err);
-            setError("No se pudieron cargar tus pedidos asignados.");
-        } finally {
-            setCargando(false);
-        }
-    }, [idRepartidor]);
+  const totalPedidos = pedidos.length;
+  const enRuta = pedidos.filter(p => p.estadoPedido?.nombreEstado === "EN_RUTA").length;
+  const entregados = pedidos.filter(p => p.estadoPedido?.nombreEstado === "ENTREGADO").length;
+  const pendientes = pedidos.filter(p => p.estadoPedido?.nombreEstado === "PENDIENTE").length;
 
-    useEffect(() => {
-        queueMicrotask(cargarPedidos);
-    }, [cargarPedidos]);
-
-    const pedidosFiltrados = useMemo(() => {
-        const query = busqueda.trim().toLowerCase();
-
-        return pedidos.filter((pedido) => {
-            const estado = normalizarEstado(pedido);
-            const cumpleEstado = estadoFiltro === "TODOS" || estado === estadoFiltro;
-            const cumpleBusqueda =
-                !query ||
-                String(pedido.idPedido || "").includes(query) ||
-                (pedido.direccionEntrega || "").toLowerCase().includes(query) ||
-                (pedido.cliente?.nombre || "").toLowerCase().includes(query);
-
-            return cumpleEstado && cumpleBusqueda;
-        });
-    }, [busqueda, estadoFiltro, pedidos]);
-
-    const total = pedidos.length;
-    const pendientes = pedidos.filter((pedido) => normalizarEstado(pedido) === "PENDIENTE").length;
-    const enRuta = pedidos.filter((pedido) => normalizarEstado(pedido) === "EN_RUTA").length;
-    const entregados = pedidos.filter((pedido) => normalizarEstado(pedido) === "ENTREGADO").length;
-    const tiempoPromedio =
-        total > 0
-            ? pedidos.reduce((sum, pedido) => sum + Number(pedido.tiempoEstimadoEntrega || 0), 0) /
-            total
-            : 0;
-
-    return (
-        <div className="min-h-screen bg-slate-50 text-slate-900">
-            <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
-                <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3">
-                        <span className="flex items-center justify-center w-11 h-11 text-white rounded-lg material-symbols-outlined bg-slate-900">
-                            local_shipping
-                        </span>
-                        <div>
-                            <h1 className="text-xl font-bold">LogiFlow</h1>
-                            <p className="text-sm text-slate-500">Panel de repartidor</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <div className="hidden text-right sm:block">
-                            <p className="text-sm font-bold">{nombre}</p>
-                            <p className="text-xs text-slate-500">ID #{idRepartidor || "sin asignar"}</p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                localStorage.clear();
-                                window.location.href = "/login";
-                            }}
-                            className="inline-flex items-center justify-center w-10 h-10 border rounded-lg text-slate-600 border-slate-200 hover:bg-slate-100"
-                            title="Cerrar sesion"
-                        >
-                            <span className="material-symbols-outlined">logout</span>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main className="px-4 py-6 mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
-                <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                        <p className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-                            Jornada activa
-                        </p>
-                        <h2 className="mt-1 text-3xl font-bold text-slate-950">
-                            Tus pedidos asignados
-                        </h2>
-                        <p className="mt-2 text-sm text-slate-500">
-                            Revisa direcciones, tiempos estimados y estado de cada entrega.
-                        </p>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={cargarPedidos}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-white rounded-lg bg-slate-900 hover:bg-slate-800"
-                    >
-                        <span className="material-symbols-outlined text-xl">refresh</span>
-                        Actualizar
-                    </button>
-                </section>
-
-                <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-                    <StatCard icon="assignment" label="Total" value={total} />
-                    <StatCard icon="pending_actions" label="Pendientes" value={pendientes} />
-                    <StatCard icon="route" label="En ruta" value={enRuta} />
-                    <StatCard icon="task_alt" label="Entregados" value={entregados} />
-                    <StatCard icon="schedule" label="Tiempo prom." value={`${tiempoPromedio.toFixed(0)} min`} />
-                </section>
-
-                <section className="flex flex-col gap-3 p-4 bg-white border rounded-lg border-slate-200 md:flex-row md:items-center">
-                    <div className="flex items-center flex-1 gap-3 px-3 py-2 border rounded-lg border-slate-200">
-                        <span className="material-symbols-outlined text-slate-400">search</span>
-                        <input
-                            type="text"
-                            value={busqueda}
-                            onChange={(event) => setBusqueda(event.target.value)}
-                            placeholder="Buscar por pedido, cliente o direccion..."
-                            className="w-full text-sm bg-transparent border-none outline-none text-slate-800 placeholder:text-slate-400"
-                        />
-                    </div>
-
-                    <select
-                        value={estadoFiltro}
-                        onChange={(event) => setEstadoFiltro(event.target.value)}
-                        className="px-3 py-3 text-sm bg-white border rounded-lg outline-none border-slate-200 text-slate-700"
-                    >
-                        {estados.map((estado) => (
-                            <option key={estado} value={estado}>
-                                {estado === "TODOS" ? "Todos los estados" : estado.replaceAll("_", " ")}
-                            </option>
-                        ))}
-                    </select>
-                </section>
-
-                {cargando ? (
-                    <MessageCard icon="progress_activity" text="Cargando pedidos asignados..." />
-                ) : error ? (
-                    <section className="p-6 text-center text-red-800 border rounded-lg bg-red-50 border-red-200">
-                        <p className="font-semibold">{error}</p>
-                        <button
-                            type="button"
-                            onClick={cargarPedidos}
-                            className="px-4 py-2 mt-4 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700"
-                        >
-                            Reintentar conexion
-                        </button>
-                    </section>
-                ) : (
-                    <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-                        <div className="overflow-hidden bg-white border rounded-lg border-slate-200 xl:col-span-2">
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm text-left">
-                                    <thead className="text-xs font-bold uppercase bg-slate-100 text-slate-500">
-                                        <tr>
-                                            <th className="px-4 py-4">Pedido</th>
-                                            <th className="px-4 py-4">Direccion</th>
-                                            <th className="px-4 py-4">Salida</th>
-                                            <th className="px-4 py-4">Entrega</th>
-                                            <th className="px-4 py-4">Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {pedidosFiltrados.length > 0 ? (
-                                            pedidosFiltrados.map((pedido) => {
-                                                const estado = normalizarEstado(pedido);
-
-                                                return (
-                                                    <tr key={pedido.idPedido} className="hover:bg-slate-50">
-                                                        <td className="px-4 py-4 font-bold text-slate-950">
-                                                            #{pedido.idPedido}
-                                                        </td>
-                                                        <td className="px-4 py-4 min-w-72">
-                                                            <p className="font-semibold text-slate-800">
-                                                                {pedido.direccionEntrega || "Direccion no registrada"}
-                                                            </p>
-                                                            <p className="mt-1 text-xs text-slate-500">
-                                                                Orden en ruta: {pedido.ordenEnRuta || "-"}
-                                                            </p>
-                                                        </td>
-                                                        <td className="px-4 py-4 text-slate-600">
-                                                            {pedido.horaSalida || "--:--"}
-                                                        </td>
-                                                        <td className="px-4 py-4 text-slate-600">
-                                                            {pedido.horaEntrega || "--:--"}
-                                                        </td>
-                                                        <td className="px-4 py-4">
-                                                            <span
-                                                                className={`inline-flex px-3 py-1 text-xs font-bold border rounded-full ${estadoStyles[estado] || estadoStyles.PENDIENTE
-                                                                    }`}
-                                                            >
-                                                                {estado.replaceAll("_", " ")}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="5" className="px-4 py-10 text-center text-slate-500">
-                                                    No hay pedidos para mostrar.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <aside className="p-5 bg-white border rounded-lg border-slate-200">
-                            <div className="flex items-center gap-3">
-                                <span className="flex items-center justify-center w-11 h-11 rounded-lg material-symbols-outlined bg-slate-100 text-slate-700">
-                                    map
-                                </span>
-                                <div>
-                                    <h3 className="font-bold text-slate-950">Siguiente entrega</h3>
-                                    <p className="text-sm text-slate-500">Prioridad por orden de ruta</p>
-                                </div>
-                            </div>
-
-                            <NextDelivery pedidos={pedidosFiltrados} />
-                        </aside>
-                    </section>
-                )}
-            </main>
-        </div>
-    );
-}
-
-function StatCard({ icon, label, value }) {
-    return (
-        <article className="p-4 bg-white border rounded-lg border-slate-200">
-            <div className="flex items-center justify-between gap-3">
-                <div>
-                    <p className="text-sm font-semibold text-slate-500">{label}</p>
-                    <p className="mt-2 text-2xl font-bold text-slate-950">{value}</p>
-                </div>
-                <span className="flex items-center justify-center w-11 h-11 rounded-lg material-symbols-outlined bg-slate-100 text-slate-700">
-                    {icon}
-                </span>
-            </div>
-        </article>
-    );
-}
-
-function MessageCard({ icon, text }) {
-    return (
-        <section className="flex items-center justify-center gap-3 p-10 bg-white border rounded-lg border-slate-200">
-            <span className="material-symbols-outlined text-slate-400">{icon}</span>
-            <span className="text-sm font-semibold text-slate-500">{text}</span>
-        </section>
-    );
-}
-
-function NextDelivery({ pedidos }) {
-    const siguiente = [...pedidos]
-        .filter((pedido) => normalizarEstado(pedido) !== "ENTREGADO")
-        .sort((a, b) => Number(a.ordenEnRuta || 999) - Number(b.ordenEnRuta || 999))[0];
-
-    if (!siguiente) {
-        return (
-            <div className="p-4 mt-5 text-sm text-center rounded-lg bg-slate-50 text-slate-500">
-                No hay entregas pendientes.
-            </div>
-        );
-    }
-
-    return (
-        <div className="mt-5 space-y-4">
-            <div className="p-4 rounded-lg bg-slate-50">
-                <p className="text-xs font-bold uppercase text-slate-500">Pedido</p>
-                <p className="mt-1 text-2xl font-bold text-slate-950">#{siguiente.idPedido}</p>
-            </div>
-
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="bg-inverse-surface text-on-primary p-4 md:p-6">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-3xl">local_shipping</span>
             <div>
-                <p className="text-xs font-bold uppercase text-slate-500">Direccion</p>
-                <p className="mt-1 text-sm font-semibold text-slate-800">
-                    {siguiente.direccionEntrega || "Direccion no registrada"}
-                </p>
+              <h1 className="text-xl md:text-2xl font-bold">LogiFlow</h1>
+              <p className="text-sm text-outline-variant">Panel del Repartidor</p>
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-slate-50">
-                    <p className="text-xs font-bold uppercase text-slate-500">Orden</p>
-                    <p className="mt-1 text-lg font-bold text-slate-950">
-                        {siguiente.ordenEnRuta || "-"}
-                    </p>
-                </div>
-                <div className="p-3 rounded-lg bg-slate-50">
-                    <p className="text-xs font-bold uppercase text-slate-500">Tiempo</p>
-                    <p className="mt-1 text-lg font-bold text-slate-950">
-                        {siguiente.tiempoEstimadoEntrega || 0} min
-                    </p>
-                </div>
-            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm hidden sm:block">Hola, <strong>{nombre}</strong></span>
+            <button onClick={() => { localStorage.clear(); window.location.href = "/login"; }} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-surface-variant transition-colors text-on-primary">
+              <span className="material-symbols-outlined">logout</span>
+              <span className="hidden sm:inline text-sm font-medium">Salir</span>
+            </button>
+          </div>
         </div>
-    );
+      </header>
+
+      <main className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white border border-outline-variant p-4 rounded-xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary-fixed text-primary rounded-full flex items-center justify-center"><span className="material-symbols-outlined">inventory_2</span></div>
+            <div><p className="text-xs text-outline">Total</p><p className="text-2xl font-bold">{totalPedidos}</p></div>
+          </div>
+          <div className="bg-white border border-outline-variant p-4 rounded-xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#1976D2]/10 text-[#1976D2] rounded-full flex items-center justify-center"><span className="material-symbols-outlined">local_shipping</span></div>
+            <div><p className="text-xs text-outline">En Ruta</p><p className="text-2xl font-bold">{enRuta}</p></div>
+          </div>
+          <div className="bg-white border border-outline-variant p-4 rounded-xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#43A047]/10 text-[#43A047] rounded-full flex items-center justify-center"><span className="material-symbols-outlined">check_circle</span></div>
+            <div><p className="text-xs text-outline">Entregados</p><p className="text-2xl font-bold">{entregados}</p></div>
+          </div>
+          <div className="bg-white border border-outline-variant p-4 rounded-xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#FFA000]/10 text-[#FFA000] rounded-full flex items-center justify-center"><span className="material-symbols-outlined">pending</span></div>
+            <div><p className="text-xs text-outline">Pendientes</p><p className="text-2xl font-bold">{pendientes}</p></div>
+          </div>
+        </div>
+
+        <div className="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-outline-variant">
+            <h2 className="font-bold text-xl text-on-surface">Mis Pedidos Asignados</h2>
+          </div>
+          <div className="divide-y divide-outline-variant/40">
+            {pedidos.length === 0 ? (
+              <div className="p-8 text-center text-on-surface-variant">
+                <span className="material-symbols-outlined text-5xl text-outline">inbox</span>
+                <p className="mt-2">No tienes pedidos asignados actualmente.</p>
+              </div>
+            ) : (
+              pedidos.map(p => (
+                <div key={p.idPedido} className="p-4 hover:bg-surface-container-lowest transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-on-surface">Pedido #{p.idPedido}</span>
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${coloresEstado[p.estadoPedido?.nombreEstado] || "bg-gray-100 text-gray-600"}`}>{p.estadoPedido?.nombreEstado || "-"}</span>
+                      </div>
+                      <p className="text-sm text-on-surface-variant mt-1">
+                        <span className="material-symbols-outlined text-sm align-middle">location_on</span> {p.direccionEntrega}
+                      </p>
+                      <p className="text-xs text-outline mt-1">Cliente: #{p.cliente?.idCliente || "-"} | Salida: {p.horaSalida} | Entrega: {p.horaEntrega}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-primary">S/ {p.costoEnvio}</p>
+                      <p className="text-xs text-outline">{p.tiempoEstimadoEntrega} min est.</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export default PanelRepartidor;

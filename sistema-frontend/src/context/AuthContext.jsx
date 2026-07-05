@@ -1,23 +1,21 @@
-import { createContext, useContext, useState, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+  const [user, setUser] = useState(() => {
     const token = localStorage.getItem("token");
     const rol = localStorage.getItem("rol");
     const nombre = localStorage.getItem("nombre");
     const idUsuario = localStorage.getItem("idUsuario");
 
     if (token && rol && nombre && idUsuario) {
-      setUser({ token, rol, nombre, idUsuario: Number(idUsuario) });
+      return { token, rol, nombre, idUsuario: Number(idUsuario) };
     }
-    setLoading(false);
-  }, []);
-
+    return null;
+  });
+  const [loading] = useState(false);
   const loginUser = (data) => {
     localStorage.setItem("token", data.token);
     localStorage.setItem("rol", data.rol);

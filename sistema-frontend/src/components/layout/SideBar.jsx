@@ -20,7 +20,7 @@ function SideBar({ sidebarOpen, onClose}) {
 
   return (
      <aside
-      className={`fixed left-0 top-0 h-full w-[260px] flex flex-col bg-inverse-surface border-r border-outline-variant z-50 transition-transform duration-300 md:translate-x-0 ${
+      className={`fixed left-0 top-0 h-full w-[260px] flex flex-col bg-black border-r border-outline-variant z-50 transition-transform duration-300 md:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >

@@ -280,9 +280,9 @@ export default function Registro() {
                 disabled={cargando}
                 className={`w-full font-bold py-4 rounded-lg flex items-center justify-center gap-2 ${
                   cargando
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                } text-white`}
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-primary text-on-primary hover:opacity-90"
+                }`}
               >
                 {cargando ? "CREANDO CUENTA..." : "CREAR CUENTA"}
                 <span className="material-symbols-outlined">
@@ -299,7 +299,7 @@ export default function Registro() {
               </p>
               <a
                 href="/login"
-                className="text-blue-600 font-bold"
+                className="text-primary font-bold hover:opacity-80"
               >
                 VOLVER AL LOGIN
               </a>

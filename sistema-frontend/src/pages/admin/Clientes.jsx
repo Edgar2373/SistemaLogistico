@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { getClientes, crearCliente, actualizarCliente, eliminarCliente } from "../../services/clienteService";
 import ClientesHeader from "../../components/clientes/ClientesHeader";
@@ -18,10 +19,6 @@ function Clientes() {
   const [modalEliminar, setModalEliminar] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
-  useEffect(() => {
-    cargarClientes();
-  }, []);
-
   const cargarClientes = async () => {
     try {
       const data = await getClientes();
@@ -31,6 +28,10 @@ function Clientes() {
       console.error("Error al cargar clientes:", error);
     }
   };
+
+  useEffect(() => {
+    cargarClientes();
+  }, []);
 
   const clientesFiltrados = busqueda
     ? clientes.filter((c) =>
