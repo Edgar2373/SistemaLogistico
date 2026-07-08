@@ -1,58 +1,44 @@
+import { useNavigate } from "react-router-dom";
 
+export default function Navbar({ onToggleSidebar, sidebarOpen }) {
+  const navigate = useNavigate();
+  const nombre = localStorage.getItem("nombre") || "Usuario";
+  const rol = localStorage.getItem("rol") || "";
 
-function TopBar({ onToggleSidebar }) {
-  const nombre = localStorage.getItem("nombre") || "Admin User";
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
-    <header className="h-16 w-full px-4 md:px-6 flex justify-between items-center bg-surface border-b border-outline-variant sticky top-0 z-40">
-
-      {/* Botón hamburguesa — solo móvil */}
-      <button
-        onClick={onToggleSidebar}
-        className="md:hidden material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors"
-      >
-        menu
-      </button>
-
-      {/* Barra de búsqueda */}
-      <div className="flex items-center gap-4 flex-1 ml-2 md:ml-0">
-        <div className="relative w-full max-w-md">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-          <input
-            className="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-base focus:ring-2 focus:ring-primary"
-            placeholder="Buscar pedidos, conductores..."
-            type="text"
-          />
-        </div>
-      </div>
-
-      {/* Acciones derecha */}
+    <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
       <div className="flex items-center gap-3">
-        <div className="flex gap-4">
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
-            notifications
-          </button>
-          <button className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors">
-            apps
-          </button>
-        </div>
-
-        {/* Avatar usuario */}
-        <div className="flex items-center gap-1 cursor-pointer group">
-          <div className="text-right hidden sm:block">
-            <p className="font-bold text-on-surface">{nombre}</p>
-            <p className="text-[10px] text-outline">Super Admin</p>
-          </div>
-          <img
-            className="w-10 h-10 rounded-full border-2 border-primary-fixed"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4I95JPDqYypD8xv7jFzeI_doJfNI5T5shNY7JGYcjFx2Ls1lkOR_tGScm81KyD1zQI1bF0GEVmDXHLj0p06Erc2SGmUkC0tMPxxfFdqvRlS9qPBFDxxaqcRZxVQg4hLr12grwek7PWbQyql1urpoBjaUBA6jSHiH30Vg5vmyzwA8rMbVxLc0AqU5M-sZ3yaFMgRYWu7tc9uC-j0cj7NfunpdukyBOhO1lXfDpUPsy24W_mEgq5wCLbSSkdnUnACCLLVfwlxJ-0sFM"
-            alt="Avatar"
-          />
-        </div>
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 lg:hidden"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={sidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+          </svg>
+        </button>
+        <span className="text-xl font-bold text-gray-800 lg:hidden">LogiFlow</span>
       </div>
 
+      <div className="flex items-center gap-4">
+        <div className="text-right hidden sm:block">
+          <p className="text-sm font-medium text-gray-700">{nombre}</p>
+          <p className="text-xs text-gray-400">{rol}</p>
+        </div>
+        <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+          {nombre.charAt(0).toUpperCase()}
+        </div>
+        <button
+          onClick={handleLogout}
+          className="text-xs font-medium text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"
+        >
+          Salir
+        </button>
+      </div>
     </header>
   );
 }
-
-export default TopBar;

@@ -49,7 +49,6 @@ public class Producto {
     private Integer stock;
 
     @NotNull(message = "La categoría es obligatoria")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;

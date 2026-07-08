@@ -32,12 +32,10 @@ public class DetallePedido {
     @Column(name = "subtotal")
     private Double subtotal;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_producto")
     private Producto producto;

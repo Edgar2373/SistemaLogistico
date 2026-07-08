@@ -31,7 +31,6 @@ public class Boleta {
     @Column(name = "total")
     private Double total;
 
-    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;

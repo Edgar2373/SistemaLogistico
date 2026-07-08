@@ -95,6 +95,7 @@ function Productos() {
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Nombre</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant hidden md:table-cell">Precio</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant hidden md:table-cell">Stock</th>
+                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant hidden md:table-cell">Estado</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant hidden lg:table-cell">Categoría</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant text-right">Acciones</th>
               </tr>
@@ -106,6 +107,15 @@ function Productos() {
                   <td className="px-4 py-3 text-sm">{p.nombreProducto}</td>
                   <td className="px-4 py-3 text-sm hidden md:table-cell">S/ {p.precio}</td>
                   <td className="px-4 py-3 text-sm hidden md:table-cell">{p.stock}</td>
+                  <td className="px-4 py-3 text-sm hidden md:table-cell">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      p.stock > 10 ? "bg-[#43A047]/10 text-[#43A047]" :
+                      p.stock > 0 ? "bg-[#FFA000]/10 text-[#FFA000]" :
+                      "bg-[#E53935]/10 text-[#E53935]"
+                    }`}>
+                      {p.stock > 10 ? "Disponible" : p.stock > 0 ? "Bajo" : "Agotado"}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-sm hidden lg:table-cell">{p.categoria?.nombreCategoria || "-"}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-2">
