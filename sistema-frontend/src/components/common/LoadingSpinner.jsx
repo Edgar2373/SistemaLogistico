@@ -1,8 +1,8 @@
-function LoadingSpinner() {
+function LoadingSpinner({ texto = "Cargando..." }) {
   return (
     <div className="flex flex-col items-center justify-center py-12">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      <p className="text-sm text-on-surface-variant mt-4 font-semibold">Cargando datos...</p>
+      <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      <p className="mt-3 text-sm text-on-surface-variant">{texto}</p>
     </div>
   );
 }

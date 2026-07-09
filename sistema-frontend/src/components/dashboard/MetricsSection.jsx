@@ -1,37 +1,64 @@
 import MetricCard from "./MetricCard";
 
-function MetricsSection() {
+function MetricsSection({ pedidosHoy, pedidosPendientes, pedidosEnRuta, pedidosEntregados, pedidosCancelados, repartidoresDisponibles, repartidoresTotal, vehiculosActivos }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       <MetricCard
         titulo="Pedidos Hoy"
-        valor="24"
-        tendencia="+12%"
-        tendenciaIcono="trending_up"
-        tendenciaColor="text-secondary"
-        subtexto="Actualizado hace 5 min"
+        valor={pedidosHoy}
         icono="local_shipping"
         colorIcono="text-primary"
+        subtexto={`${pedidosEntregados} entregados hoy`}
       />
       <MetricCard
-        titulo="Entregas Pendientes"
-        valor="8"
-        tendencia="Crítico"
-        tendenciaIcono="warning"
-        tendenciaColor="text-error"
-        subtexto="2 con retraso mayor a 1h"
+        titulo="Pendientes"
+        valor={pedidosPendientes}
         icono="pending_actions"
-        colorIcono="text-tertiary"
+        colorIcono="text-[#FFA000]"
+        subtexto="Esperando asignación"
       />
       <MetricCard
-        titulo="Repartidores Disponibles"
-        valor="5"
-        subtexto="Zona metropolitana activa"
+        titulo="En Ruta"
+        valor={pedidosEnRuta}
+        icono="alt_route"
+        colorIcono="text-[#1976D2]"
+        subtexto="En camino a destino"
+      />
+      <MetricCard
+        titulo="Entregados"
+        valor={pedidosEntregados}
+        icono="check_circle"
+        colorIcono="text-[#43A047]"
+        subtexto="Completados exitosamente"
+      />
+      <MetricCard
+        titulo="Cancelados"
+        valor={pedidosCancelados}
+        icono="cancel"
+        colorIcono="text-[#E53935]"
+        subtexto="Pedidos cancelados"
+      />
+      <MetricCard
+        titulo="Repartidores"
+        valor={`${repartidoresDisponibles}/${repartidoresTotal}`}
         icono="person_pin_circle"
         colorIcono="text-secondary"
-      >
-        <span className="text-on-surface-variant font-medium">de 12 total</span>
-      </MetricCard>
+        subtexto="Disponibles de total"
+      />
+      <MetricCard
+        titulo="Vehículos Activos"
+        valor={vehiculosActivos}
+        icono="local_shipping"
+        colorIcono="text-tertiary"
+        subtexto="En operación"
+      />
+      <MetricCard
+        titulo="Total Pedidos"
+        valor={pedidosHoy + pedidosPendientes + pedidosEnRuta + pedidosEntregados + pedidosCancelados}
+        icono="inventory_2"
+        colorIcono="text-primary"
+        subtexto="Todos los registros"
+      />
     </div>
   );
 }

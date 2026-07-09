@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
-// Lista de accesos directos
 const accesos = [
-  { label: "Módulo de Pedidos", icon: "shopping_cart", path: "/pedidos" },
+  { label: "Registrar Pedido", icon: "add_shopping_cart", path: "/pedidos" },
   { label: "Gestión de Clientes", icon: "groups", path: "/clientes" },
+  { label: "Catálogo de Productos", icon: "inventory_2", path: "/productos" },
   { label: "Control de Repartidores", icon: "sports_motorsports", path: "/repartidores" },
 ];
 

@@ -47,7 +47,6 @@ public class Pago {
     private String referenciaTransaccion;
 
     @NotNull(message = "La boleta es obligatoria")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_boleta")
     private Boleta boleta;

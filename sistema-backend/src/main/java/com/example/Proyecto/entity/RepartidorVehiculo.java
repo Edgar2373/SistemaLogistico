@@ -31,12 +31,10 @@ public class RepartidorVehiculo {
     @Column(name = "estado_asignacion", length = 50)
     private String estadoAsignacion;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_repartidor")
     private Repartidor repartidor;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_vehiculo")
     private Vehiculo vehiculo;

@@ -10,8 +10,8 @@
   --color-on-background: #071e27;
   --color-on-primary-fixed-variant: #004786;
   --color-secondary-fixed-dim: #7ddc7a;
-  --color-primary-container: #1976d2;
-  --color-primary: #005dac;
+  --color-primary-container: #2a2a2a;
+  --color-primary: #000000;
   --color-error: #ba1a1a;
   --color-on-tertiary-fixed: #2b1700;
   --color-primary-fixed: #d4e3ff;
@@ -43,7 +43,7 @@
   --color-on-error: #ffffff;
   --color-on-secondary-container: #0c7521;
   --color-on-error-container: #93000a;
-  --color-surface-tint: #005faf;
+  --color-surface-tint: #000000;
   --color-outline: #717783;
   --color-surface-container-low: #e6f6ff;
   --color-surface-container: #dbf1fe;
@@ -59,8 +59,8 @@ body {
 }
 
 .sidebar-active {
-  border-left: 4px solid #005dac;
-  background-color: #1976d2;
+  border-left: 4px solid #000000;
+  background-color: #2a2a2a;
   color: #fffdff;
 }
 

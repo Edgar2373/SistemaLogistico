@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { getUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } from "../../services/usuarioService";
 import UsuariosHeader from "../../components/usuarios/UsuariosHeader";
@@ -19,10 +20,6 @@ function Usuarios() {
   const [modalEliminar, setModalEliminar] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
-
   const cargarUsuarios = async () => {
     try {
       const data = await getUsuarios();
@@ -32,6 +29,10 @@ function Usuarios() {
       console.error("Error al cargar usuarios:", error);
     }
   };
+
+  useEffect(() => {
+    cargarUsuarios();
+  }, []);
 
   // Filtrar por rol
   const usuariosFiltrados = filtroRol

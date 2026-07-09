@@ -71,4 +71,10 @@ public class PedidoController {
                         fechaFin);
     }
 
+    //actualiza el stock
+    @PostMapping("/completo")
+    public Pedido registrarCompleto(@Valid @RequestBody Pedido pedido) {
+        return pedidoService.registrarPedidoCompleto(pedido);
+    }
+
 }
