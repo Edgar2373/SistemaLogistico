@@ -29,7 +29,6 @@ public class Ruta {
     @Column(name = "distancia_km")
     private Double distanciaKm;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_zona")
     private Zona zona;

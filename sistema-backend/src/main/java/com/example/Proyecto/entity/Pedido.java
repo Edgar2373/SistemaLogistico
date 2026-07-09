@@ -43,13 +43,9 @@ public class Pedido {
     @Column(name = "hora_entrega")
     private LocalTime horaEntrega;
 
-    @NotNull(message = "El tiempo estimado es obligatorio")
-    @Positive(message = "Debe ser mayor a 0")
     @Column(name = "tiempo_estimado_entrega")
     private Integer tiempoEstimadoEntrega;
 
-    @NotNull(message = "El tiempo real es obligatorio")
-    @Positive(message = "Debe ser mayor a 0")
     @Column(name = "tiempo_real_entrega")
     private Integer tiempoRealEntrega;
 
@@ -68,31 +64,26 @@ public class Pedido {
     private Integer ordenEnRuta;
 
     @NotNull(message = "El cliente es obligatorio")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
     @NotNull(message = "El usuario es obligatorio")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @NotNull(message = "El repartidor es obligatorio")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_repartidor")
     private Repartidor repartidor;
 
     @NotNull(message = "La ruta es obligatoria")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_ruta")
     private Ruta ruta;
 
     @NotNull(message = "El estado del pedido es obligatorio")
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_estado")
     private EstadoPedido estadoPedido;
