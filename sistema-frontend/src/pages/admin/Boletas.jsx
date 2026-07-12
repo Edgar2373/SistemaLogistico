@@ -1,25 +1,30 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { getBoletas, crearBoleta, actualizarBoleta, eliminarBoleta } from "../../services/boletaService";
-import { getPedidos } from "../../services/pedidoService";
+import { getBoletas } from "../../services/boletaService";
+import { getPedidoPorId, actualizarPedido } from "../../services/pedidoService";
+import { getEstadosPedido } from "../../services/estadoPedidoService";
+import { getPagos, actualizarPago } from "../../services/pagoService";
+import { getDetallesPedido } from "../../services/detallePedidoService";
+import { EMPRESA_CONFIG } from "../../utils/constans";
+import BoletaPreview from "../../components/boleta/BoletaPreview";
+import StatusBadge from "../../components/common/StatusBadge";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 function Boletas() {
   const [boletas, setBoletas] = useState([]);
-  const [pedidos, setPedidos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [modalNuevo, setModalNuevo] = useState(false);
-  const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
+  const [modalDetalle, setModalDetalle] = useState(false);
+  const [modalCancelar, setModalCancelar] = useState(false);
   const [seleccionado, setSeleccionado] = useState(null);
-  const [error, setError] = useState("");
+  const [pedidoDetalle, setPedidoDetalle] = useState(null);
+  const [detallesPedido, setDetallesPedido] = useState([]);
+  const [pagoDetalle, setPagoDetalle] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const cargar = async () => {
     try {
-      const [b, p] = await Promise.all([getBoletas(), getPedidos()]);
+      const b = await getBoletas();
       setBoletas(b);
-      setPedidos(p);
     } catch (e) {
       console.error(e);
     } finally {
@@ -38,38 +43,75 @@ function Boletas() {
     );
   });
 
-  const handleCrear = async (e) => {
-    e.preventDefault(); setError("");
-    const fd = new FormData(e.target);
+  const verDetalle = async (boleta) => {
+    setSeleccionado(boleta);
+    setPedidoDetalle(boleta.pedido || null);
     try {
-      await crearBoleta({
-        fechaEmision: fd.get("fechaEmision"),
-        total: Number(fd.get("total")),
-        pedido: { idPedido: Number(fd.get("idPedido")) },
-      });
-      setModalNuevo(false); cargar();
-    } catch (err) {
-      setError(err.response?.data?.error || "Error al crear boleta");
+      const [todosDetalles, pagos] = await Promise.all([getDetallesPedido(), getPagos()]);
+      const filtrados = todosDetalles.filter(d => d.pedido?.idPedido === boleta.pedido?.idPedido);
+      setDetallesPedido(filtrados);
+      const pago = pagos.find(p => p.boleta?.idBoleta === boleta.idBoleta);
+      setPagoDetalle(pago || null);
+    } catch (e) {
+      console.error(e);
+      setDetallesPedido([]);
+      setPagoDetalle(null);
     }
+    setModalDetalle(true);
   };
 
-  const handleActualizar = async (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
+  const enviarWhatsApp = (boleta) => {
+    const cliente = boleta.pedido?.cliente?.nombre || "Cliente";
+    const total = boleta.total?.toFixed(2) || "0.00";
+    const numBoleta = `BOL-000${boleta.idBoleta}`;
+    const msg = `Hola ${cliente}, su boleta ${numBoleta} por S/${total} está lista.\n\nFormas de pago:\n- Transferencia: ${EMPRESA_CONFIG.ctaBancaria}\n- Yape: ${EMPRESA_CONFIG.yape}\n- Plin: ${EMPRESA_CONFIG.plin}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
+
+  const cancelarBoleta = async () => {
+    if (!seleccionado) return;
     try {
-      await actualizarBoleta(seleccionado.idBoleta, {
-        fechaEmision: fd.get("fechaEmision"),
-        total: Number(fd.get("total")),
+      const pedido = await getPedidoPorId(seleccionado.pedido?.idPedido);
+      const estados = await getEstadosPedido();
+      const estadoCancelado = estados.find(e => e.nombreEstado === "CANCELADO");
+      if (!estadoCancelado) {
+        console.error("No se encontr estado CANCELADO");
+        return;
+      }
+      await actualizarPedido(pedido.idPedido, {
+        fechaRegistro: pedido.fechaRegistro,
+        horaSalida: pedido.horaSalida,
+        horaEntrega: pedido.horaEntrega,
+        tiempoEstimadoEntrega: pedido.tiempoEstimadoEntrega,
+        tiempoRealEntrega: pedido.tiempoRealEntrega,
+        costoEnvio: pedido.costoEnvio,
+        direccionEntrega: pedido.direccionEntrega,
+        ordenEnRuta: pedido.ordenEnRuta,
+        cliente: { idCliente: pedido.cliente?.idCliente },
+        usuario: { idUsuario: pedido.usuario?.idUsuario },
+        repartidor: { idRepartidor: pedido.repartidor?.idRepartidor },
+        ruta: { idRuta: pedido.ruta?.idRuta },
+        estadoPedido: { idEstado: estadoCancelado.idEstado },
       });
-      setModalEditar(false); setSeleccionado(null); cargar();
-    } catch (err) { console.error(err); }
-  };
 
-  const handleEliminar = async () => {
-    try {
-      await eliminarBoleta(seleccionado.idBoleta);
-      setModalEliminar(false); setSeleccionado(null); cargar();
-    } catch (err) { console.error(err); }
+      const pagos = await getPagos();
+      const pagoAsociado = pagos.find(p => p.boleta?.idBoleta === seleccionado.idBoleta);
+      if (pagoAsociado) {
+        await actualizarPago(pagoAsociado.idPago, {
+          metodoPago: pagoAsociado.metodoPago,
+          estadoPago: "CANCELADO",
+          fechaPago: pagoAsociado.fechaPago,
+          referenciaTransaccion: pagoAsociado.referenciaTransaccion,
+          boleta: { idBoleta: seleccionado.idBoleta },
+        });
+      }
+      setModalCancelar(false);
+      setSeleccionado(null);
+      await cargar();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -79,11 +121,8 @@ function Boletas() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
         <div>
           <h2 className="font-bold text-2xl sm:text-3xl text-on-surface">Gestión de Boletas</h2>
-          <p className="text-lg text-on-surface-variant mt-1">Boletas generadas automáticamente al registrar pedidos.</p>
+          <p className="text-lg text-on-surface-variant mt-1">Boletas generadas automticamente al registrar pedidos.</p>
         </div>
-        <button onClick={() => setModalNuevo(true)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-bold hover:opacity-90 shadow-sm">
-          <span className="material-symbols-outlined">add</span> Nueva Boleta
-        </button>
       </div>
 
       <div className="mb-4">
@@ -104,31 +143,42 @@ function Boletas() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-surface-container-low border-b border-outline-variant">
               <tr>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">N° Boleta</th>
+                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">N Boleta</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Pedido</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Fecha Emisión</th>
+                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Fecha Emisin</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Total</th>
+                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Estado</th>
                 <th className="px-4 py-3 text-sm font-medium text-on-surface-variant text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/40">
               {filtradas.length === 0 ? (
-                <tr><td colSpan="5" className="px-4 py-8 text-center text-outline">No se encontraron boletas</td></tr>
+                <tr><td colSpan="6" className="px-4 py-8 text-center text-outline">No se encontraron boletas</td></tr>
               ) : (
-                filtradas.map(b => (
+                filtradas.reverse().map(b => (
                   <tr key={b.idBoleta} className="hover:bg-surface-container-lowest transition-colors h-12">
                     <td className="px-4 py-3 text-sm font-semibold">BOL-000{b.idBoleta}</td>
                     <td className="px-4 py-3 text-sm">Pedido #{b.pedido?.idPedido || "-"}</td>
                     <td className="px-4 py-3 text-sm">{b.fechaEmision}</td>
                     <td className="px-4 py-3 text-sm font-bold text-primary">S/ {b.total?.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <StatusBadge estado={b.pedido?.estadoPedido?.nombreEstado} />
+                    </td>
                     <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => { setSeleccionado(b); setModalEditar(true); }} className="p-2 text-primary hover:bg-primary-fixed rounded transition-colors" title="Editar">
-                          <span className="material-symbols-outlined text-xl">edit</span>
+                      <div className="flex justify-end gap-1">
+                        <button onClick={() => verDetalle(b)} className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded transition-colors" title="Ver detalle">
+                          <span className="material-symbols-outlined text-xl">visibility</span>
                         </button>
-                        <button onClick={() => { setSeleccionado(b); setModalEliminar(true); }} className="p-2 text-error hover:bg-error-container rounded transition-colors" title="Eliminar">
-                          <span className="material-symbols-outlined text-xl">delete</span>
+                        <button onClick={() => enviarWhatsApp(b)} className="p-2 text-[#25D366] hover:bg-[#25D366]/10 rounded transition-colors" title="Enviar por WhatsApp">
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          </svg>
                         </button>
+                        {b.pedido?.estadoPedido?.nombreEstado !== "CANCELADO" && (
+                          <button onClick={() => { setSeleccionado(b); setModalCancelar(true); }} className="p-2 text-error hover:bg-error-container rounded transition-colors" title="Cancelar boleta">
+                            <span className="material-symbols-outlined text-xl">cancel</span>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -139,79 +189,29 @@ function Boletas() {
         </div>
       </div>
 
-      {modalNuevo && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-              <h3 className="text-xl font-bold">Nueva Boleta</h3>
-              <button onClick={() => setModalNuevo(false)} className="text-on-surface-variant hover:bg-surface-variant rounded-full p-1"><span className="material-symbols-outlined">close</span></button>
-            </div>
-            <form onSubmit={handleCrear} className="px-6 py-4 space-y-4">
-              {error && <div className="bg-red-50 border border-red-300 text-red-700 text-sm rounded-lg p-3">{error}</div>}
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1">Pedido *</label>
-                <select name="idPedido" className="w-full border border-outline-variant rounded-lg p-2" required>
-                  <option value="">Seleccione un pedido...</option>
-                  {pedidos.map(p => (
-                    <option key={p.idPedido} value={p.idPedido}>
-                      Pedido #{p.idPedido} - {p.cliente?.nombre} - S/ {p.costoEnvio}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">Fecha Emisión *</label>
-                  <input name="fechaEmision" type="date" className="w-full border border-outline-variant rounded-lg p-2" required />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1">Total (S/) *</label>
-                  <input name="total" type="number" step="0.01" className="w-full border border-outline-variant rounded-lg p-2" required />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setModalNuevo(false)} className="px-4 py-2 rounded-lg font-bold border border-outline-variant">Cancelar</button>
-                <button type="submit" className="px-4 py-2 rounded-lg font-bold bg-primary text-on-primary hover:opacity-90">Crear</button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {modalDetalle && seleccionado && (
+        <BoletaPreview
+          boleta={seleccionado}
+          pedido={pedidoDetalle}
+          detalles={detallesPedido}
+          pago={pagoDetalle}
+          onCerrar={() => { setModalDetalle(false); setSeleccionado(null); setPedidoDetalle(null); setDetallesPedido([]); setPagoDetalle(null); }}
+        />
       )}
 
-      {modalEditar && seleccionado && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-              <h3 className="text-xl font-bold">Editar Boleta BOL-000{seleccionado.idBoleta}</h3>
-              <button onClick={() => { setModalEditar(false); setSeleccionado(null); }} className="text-on-surface-variant hover:bg-surface-variant rounded-full p-1"><span className="material-symbols-outlined">close</span></button>
-            </div>
-            <form onSubmit={handleActualizar} className="px-6 py-4 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1">Fecha</label>
-                <input name="fechaEmision" type="date" defaultValue={seleccionado.fechaEmision} className="w-full border border-outline-variant rounded-lg p-2" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1">Total (S/)</label>
-                <input name="total" type="number" step="0.01" defaultValue={seleccionado.total} className="w-full border border-outline-variant rounded-lg p-2" />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => { setModalEditar(false); setSeleccionado(null); }} className="px-4 py-2 rounded-lg font-bold border border-outline-variant">Cancelar</button>
-                <button type="submit" className="px-4 py-2 rounded-lg font-bold bg-primary text-on-primary hover:opacity-90">Actualizar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {modalEliminar && (
+      {modalCancelar && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
           <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 text-center">
-            <div className="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-4"><span className="material-symbols-outlined text-4xl">warning</span></div>
-            <h3 className="text-xl font-bold">¿Eliminar boleta?</h3>
-            <p className="text-on-surface-variant mt-2">Se eliminará la boleta <strong>BOL-000{seleccionado?.idBoleta}</strong> permanentemente.</p>
+            <div className="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h3 className="text-xl font-bold">Cancelar boleta?</h3>
+            <p className="text-on-surface-variant mt-2">
+              Se cancelar la boleta <strong>BOL-000{seleccionado?.idBoleta}</strong> y el pedido <strong>#{seleccionado?.pedido?.idPedido}</strong> cambiar a estado <strong>CANCELADO</strong>.
+            </p>
             <div className="flex flex-col gap-2 mt-4">
-              <button onClick={handleEliminar} className="w-full py-3 rounded-lg font-bold bg-error text-on-error hover:opacity-90">Confirmar</button>
-              <button onClick={() => { setModalEliminar(false); setSeleccionado(null); }} className="w-full py-3 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-low">Cancelar</button>
+              <button onClick={cancelarBoleta} className="w-full py-3 rounded-lg font-bold bg-error text-on-error hover:opacity-90">Confirmar</button>
+              <button onClick={() => { setModalCancelar(false); setSeleccionado(null); }} className="w-full py-3 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-low">Cancelar</button>
             </div>
           </div>
         </div>

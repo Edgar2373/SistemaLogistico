@@ -35,3 +35,12 @@ export const CATEGORIAS_DEFAULT = [
   "Almacenamiento",
   "Accesorios",
 ];
+
+export const EMPRESA_CONFIG = {
+  nombre: import.meta.env.VITE_EMPRESA_NOMBRE || "Logiflow SAC",
+  direccion: import.meta.env.VITE_EMPRESA_DIRECCION || "Av. Principal 123, Lima",
+  telefono: import.meta.env.VITE_EMPRESA_TELEFONO || "+51 999 888 777",
+  ctaBancaria: import.meta.env.VITE_EMPRESA_CTA_BANCARIA || "123-456-789",
+  yape: import.meta.env.VITE_EMPRESA_YAPE || "999888777",
+  plin: import.meta.env.VITE_EMPRESA_PLIN || "999888777",
+};

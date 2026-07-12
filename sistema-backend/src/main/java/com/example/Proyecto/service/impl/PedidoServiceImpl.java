@@ -86,7 +86,19 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    @Transactional
     public void eliminar(Integer id) {
+        // 1. Eliminar Pagos asociados a la Boleta del Pedido
+        Boleta boleta = boletaRepository.findByPedidoIdPedido(id);
+        if (boleta != null) {
+            pagoRepository.deleteByBoletaIdBoleta(boleta.getIdBoleta());
+            boletaRepository.deleteById(boleta.getIdBoleta());
+        }
+
+        // 2. Eliminar DetallePedidos
+        detallePedidoRepository.deleteByPedidoIdPedido(id);
+
+        // 3. Eliminar el Pedido
         pedidoRepository.deleteById(id);
     }
 
@@ -182,8 +194,8 @@ public class PedidoServiceImpl implements PedidoService {
         Boleta boletaGuardada = boletaRepository.save(boleta);
 
         Pago pago = new Pago();
-        pago.setMetodoPago("TARJETA"); // O valor por defecto
-        pago.setEstadoPago("COMPLETADO");
+        pago.setMetodoPago(""); // O valor por defecto
+        pago.setEstadoPago("PENDIENTE");
         pago.setFechaPago(LocalDate.now());
         pago.setReferenciaTransaccion("REF-" + System.currentTimeMillis());
         pago.setBoleta(boletaGuardada);

@@ -5,16 +5,7 @@ export const getBoletas = async () => {
   return response.data;
 };
 
-export const crearBoleta = async (datos) => {
-  const response = await api.post("/boletas", datos);
+export const getBoletaPorId = async (id) => {
+  const response = await api.get(`/boletas/${id}`);
   return response.data;
-};
-
-export const actualizarBoleta = async (id, datos) => {
-  const response = await api.put(`/boletas/${id}`, datos);
-  return response.data;
-};
-
-export const eliminarBoleta = async (id) => {
-  await api.delete(`/boletas/${id}`);
 };
