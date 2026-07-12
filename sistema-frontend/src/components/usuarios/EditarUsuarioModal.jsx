@@ -81,17 +81,19 @@ function EditarUsuarioModal({ visible, onClose, onGuardar, usuario }) {
                 maxLength={9}
               />
             </div>
-            <div className="space-y-1">
-              <label className="font-medium text-sm text-on-surface-variant">Estado</label>
-              <select
-                name="estadoUsuario"
-                defaultValue={usuario.estadoUsuario}
-                className="w-full border border-outline-variant rounded-lg focus:ring-primary focus:border-primary px-3 py-2"
-              >
-                <option value="ACTIVO">Activo</option>
-                <option value="INACTIVO">Inactivo</option>
-              </select>
-            </div>
+            {usuario.rol === "REPARTIDOR" && (
+              <div className="space-y-1">
+                <label className="font-medium text-sm text-on-surface-variant">Estado</label>
+                <select
+                  name="estadoUsuario"
+                  defaultValue={usuario.estadoUsuario}
+                  className="w-full border border-outline-variant rounded-lg focus:ring-primary focus:border-primary px-3 py-2"
+                >
+                  <option value="OPERATIVO">Operativo</option>
+                  <option value="FUERA_DE_SERVICIO">Fuera de servicio</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="pt-4 flex justify-end gap-2 sm:gap-4">

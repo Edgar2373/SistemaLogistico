@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { getUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } from "../../services/usuarioService";
+import { getUsuarios, crearUsuario, actualizarUsuario } from "../../services/usuarioService";
+import { crearRepartidor } from "../../services/repartidorService";
 import UsuariosHeader from "../../components/usuarios/UsuariosHeader";
 import StatsSection from "../../components/usuarios/StatsSection";
 import UsuariosTable from "../../components/usuarios/UsuariosTable";
 import NuevoUsuarioModal from "../../components/usuarios/NuevoUsuarioModal";
 import EditarUsuarioModal from "../../components/usuarios/EditarUsuarioModal";
-import ConfirmDeleteModal from "../../components/usuarios/ConfirmDeleteModal";
 
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -17,7 +17,6 @@ function Usuarios() {
   // Modales
   const [modalNuevo, setModalNuevo] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
 
   const cargarUsuarios = async () => {
@@ -47,8 +46,9 @@ function Usuarios() {
 
   // Estadísticas
   const total = usuarios.length;
-  const activos = usuarios.filter((u) => u.estadoUsuario === "ACTIVO").length;
-  const inactivos = usuarios.filter((u) => u.estadoUsuario !== "ACTIVO").length;
+  const repartidores = usuarios.filter((u) => u.rol === "REPARTIDOR");
+  const activos = repartidores.filter((u) => u.estadoUsuario === "OPERATIVO").length;
+  const inactivos = repartidores.filter((u) => u.estadoUsuario !== "OPERATIVO").length;
   const pendientes = 0;
 
 
@@ -56,17 +56,22 @@ function Usuarios() {
   const handleGuardarNuevo = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const rol = formData.get("rol");
     const nuevoUsuario = {
       nombre: formData.get("nombre"),
       telefono: formData.get("telefono"),
       usuario: formData.get("usuario"),
       email: formData.get("email"),
       passwordHash: formData.get("password"),
-      rol: formData.get("rol"),
-      estadoUsuario: "ACTIVO",
+      rol,
+      estadoUsuario: "OPERATIVO",
     };
     try {
       await crearUsuario(nuevoUsuario);
+      if (rol === "REPARTIDOR") {
+        const licencia = formData.get("licencia");
+        await crearRepartidor({ licencia, estadoRepartidor: "DISPONIBLE", rendimientoPromedio: 0 });
+      }
       setModalNuevo(false);
       cargarUsuarios();
     } catch (error) {
@@ -90,7 +95,7 @@ function Usuarios() {
       usuario: formData.get("usuario"),
       email: formData.get("email"),
       rol: formData.get("rol"),
-      estadoUsuario: formData.get("estadoUsuario"),
+      estadoUsuario: formData.get("estadoUsuario") || "OPERATIVO",
     };
     // Solo incluir contraseña si se escribió una nueva
     const password = formData.get("password");
@@ -107,23 +112,6 @@ function Usuarios() {
     }
   };
 
-  // ELIMINAR
-  const handleEliminar = (usuario) => {
-    setUsuarioSeleccionado(usuario);
-    setModalEliminar(true);
-  };
-
-  const confirmarEliminar = async () => {
-    try {
-      await eliminarUsuario(usuarioSeleccionado.idUsuario);
-      setModalEliminar(false);
-      setUsuarioSeleccionado(null);
-      cargarUsuarios();
-    } catch (error) {
-      console.error("Error al eliminar:", error);
-    }
-  };
-
   return (
     <>
       <UsuariosHeader
@@ -137,7 +125,6 @@ function Usuarios() {
       <UsuariosTable
         usuarios={usuariosPagina}
         onEditar={handleEditar}
-        onEliminar={handleEliminar}
         paginaActual={paginaActual}
         totalPaginas={totalPaginas}
         onCambioPagina={setPaginaActual}
@@ -156,12 +143,6 @@ function Usuarios() {
         usuario={usuarioSeleccionado}
       />
 
-      <ConfirmDeleteModal
-        visible={modalEliminar}
-        onClose={() => { setModalEliminar(false); setUsuarioSeleccionado(null); }}
-        onConfirmar={confirmarEliminar}
-        nombreUsuario={usuarioSeleccionado?.nombre || ""}
-      />
     </>
   );
 }

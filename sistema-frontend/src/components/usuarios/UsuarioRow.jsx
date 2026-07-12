@@ -1,4 +1,4 @@
-function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEditar, onEliminar }) {
+function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEditar }) {
   // Iniciales para el avatar
   const iniciales = nombre.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase();
 
@@ -28,27 +28,31 @@ function UsuarioRow({ id, nombre, usuario, email, telefono, rol, estado, onEdita
       <td className="px-3 sm:px-6 py-3 text-sm">
         <span className="px-2 py-1 bg-surface-variant text-on-surface-variant rounded text-xs font-bold">{rol}</span>
       </td>
-      <td className="px-3 sm:px-6 py-3 text-sm hidden md:table-cell">
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          estado === "ACTIVO"
-            ? "bg-[#43A047]/10 text-[#43A047]"
-            : "bg-[#E53935]/10 text-[#E53935]"
-        }`}>
-          <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-            estado === "ACTIVO" ? "bg-[#43A047]" : "bg-[#E53935]"
-          }`}></span>
-          {estado === "ACTIVO" ? "Activo" : "Inactivo"}
-        </span>
-      </td>
+      {rol === "REPARTIDOR" ? (
+        <td className="px-3 sm:px-6 py-3 text-sm hidden md:table-cell">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            estado === "OPERATIVO"
+              ? "bg-[#43A047]/10 text-[#43A047]"
+              : "bg-[#E53935]/10 text-[#E53935]"
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+              estado === "OPERATIVO" ? "bg-[#43A047]" : "bg-[#E53935]"
+            }`}></span>
+            {estado === "OPERATIVO" ? "Operativo" : "Fuera de servicio"}
+          </span>
+        </td>
+      ) : (
+        <td className="px-3 sm:px-6 py-3 text-sm hidden md:table-cell">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#43A047]/10 text-[#43A047]">
+            <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-[#43A047]"></span>
+            Operativo
+          </span>
+        </td>
+      )}
       <td className="px-3 sm:px-6 py-3 text-right">
-        <div className="flex justify-end gap-2">
-          <button onClick={onEditar} className="p-2 text-primary hover:bg-primary-fixed rounded transition-colors" title="Editar">
-            <span className="material-symbols-outlined text-xl">edit</span>
-          </button>
-          <button onClick={onEliminar} className="p-2 text-error hover:bg-error-container rounded transition-colors" title="Eliminar">
-            <span className="material-symbols-outlined text-xl">delete</span>
-          </button>
-        </div>
+        <button onClick={onEditar} className="p-2 text-primary hover:bg-primary-fixed rounded transition-colors" title="Editar">
+          <span className="material-symbols-outlined text-xl">edit</span>
+        </button>
       </td>
     </tr>
   );

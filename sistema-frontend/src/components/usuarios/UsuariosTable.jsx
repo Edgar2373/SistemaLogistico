@@ -1,6 +1,6 @@
 import UsuarioRow from "./UsuarioRow";
 
-function UsuariosTable({ usuarios, onEditar, onEliminar, paginaActual, totalPaginas, onCambioPagina }) {
+function UsuariosTable({ usuarios, onEditar, paginaActual, totalPaginas, onCambioPagina }) {
   return (
     <div className="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
@@ -29,7 +29,6 @@ function UsuariosTable({ usuarios, onEditar, onEliminar, paginaActual, totalPagi
                 rol={u.rol}
                 estado={u.estadoUsuario}
                 onEditar={() => onEditar(u)}
-                onEliminar={() => onEliminar(u)}
               />
             ))}
           </tbody>
