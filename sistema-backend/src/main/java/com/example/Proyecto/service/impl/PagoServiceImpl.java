@@ -45,6 +45,7 @@ public class PagoServiceImpl implements PagoService {
                     pago.getReferenciaTransaccion());
 
             pagoExistente.setBoleta(pago.getBoleta());
+            pagoExistente.setUrlEvidencia(pago.getUrlEvidencia());
 
             return pagoRepository.save(pagoExistente);
         }

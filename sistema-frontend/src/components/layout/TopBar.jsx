@@ -32,12 +32,7 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }) {
         <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
           {nombre.charAt(0).toUpperCase()}
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-xs font-medium text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"
-        >
-          Salir
-        </button>
+        
       </div>
     </header>
   );

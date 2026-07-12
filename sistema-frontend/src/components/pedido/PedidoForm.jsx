@@ -80,7 +80,7 @@ function PedidoForm({ onExito, onCancelar }) {
       tiempoRealEntrega: 0,
       costoEnvio: Number(fd.get("costoEnvio")),
       direccionEntrega: fd.get("direccionEntrega"),
-      ordenEnRuta: Number(fd.get("ordenEnRuta") || 1),
+      ordenEnRuta: 1,
       cliente: { idCliente: Number(fd.get("idCliente")) },
       usuario: { idUsuario: Number(localStorage.getItem("idUsuario")) },
       repartidor: { idRepartidor: Number(fd.get("idRepartidor")) },
@@ -257,10 +257,6 @@ function PedidoForm({ onExito, onCancelar }) {
           <div>
             <label className="block text-xs font-bold text-slate-500 mb-1">Tiempo Estimado (min) *</label>
             <input name="tiempoEstimadoEntrega" type="number" className="w-full border border-outline-variant rounded-lg p-2" required />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-500 mb-1">Orden en Ruta</label>
-            <input name="ordenEnRuta" type="number" defaultValue="1" className="w-full border border-outline-variant rounded-lg p-2" />
           </div>
         </div>
       </div>

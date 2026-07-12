@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BoletaRepository extends JpaRepository<Boleta, Integer> {
 
+    Boleta findByPedidoIdPedido(Integer idPedido);
+
 }

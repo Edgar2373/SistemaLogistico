@@ -14,7 +14,3 @@ export const actualizarPago = async (id, datos) => {
   const response = await api.put(`/pagos/${id}`, datos);
   return response.data;
 };
-
-export const eliminarPago = async (id) => {
-  await api.delete(`/pagos/${id}`);
-};

@@ -51,4 +51,7 @@ public class Pago {
     @JoinColumn(name = "id_boleta")
     private Boleta boleta;
 
+    @Column(name = "url_evidencia", length = 255)
+    private String urlEvidencia;
+
 }

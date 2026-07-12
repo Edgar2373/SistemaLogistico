@@ -7,12 +7,12 @@ const menuItems = [
   { label: "Categorías", path: "/categorias", icon: "📂" },
   { label: "Productos", path: "/productos", icon: "📦" },
   { label: "Pedidos", path: "/pedidos", icon: "📋" },
-  { label: "Boletas", path: "/boletas", icon: "🧾" },
   { label: "Pagos", path: "/pagos", icon: "💳" },
+  { label: "Boletas", path: "/boletas", icon: "🧾" },
   { label: "Estados Pedido", path: "/estados-pedido", icon: "🏷️" },
   { label: "Repartidores", path: "/repartidores", icon: "🚚" },
   { label: "Vehículos", path: "/vehiculos", icon: "🚛" },
-  { label: "Asig. Repartidor-Veh.", path: "/asignacion-repartidor-vehiculo", icon: "🔗" },
+  //{ label: "Asig. Repartidor-Veh.", path: "/asignacion-repartidor-vehiculo", icon: "🔗" },
   { label: "Rutas", path: "/rutas", icon: "🛣️" },
 ];
 
