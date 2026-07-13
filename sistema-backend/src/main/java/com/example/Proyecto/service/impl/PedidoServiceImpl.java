@@ -194,7 +194,7 @@ public class PedidoServiceImpl implements PedidoService {
         Boleta boletaGuardada = boletaRepository.save(boleta);
 
         Pago pago = new Pago();
-        pago.setMetodoPago(""); // O valor por defecto
+        pago.setMetodoPago("TARJETA"); // O valor por defecto
         pago.setEstadoPago("PENDIENTE");
         pago.setFechaPago(LocalDate.now());
         pago.setReferenciaTransaccion("REF-" + System.currentTimeMillis());

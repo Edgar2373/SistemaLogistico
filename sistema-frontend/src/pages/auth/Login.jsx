@@ -84,10 +84,10 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+         {/* <div className="mt-8 pt-6 border-t border-gray-200 text-center">
             <p className="text-gray-500 text-sm">¿No tienes una cuenta?</p>
             <a href="/registro" className="block mt-2 text-primary font-bold uppercase tracking-wider hover:opacity-80">Crear Cuenta</a>
-          </div>
+          </div> */}
         </div>
 
         <div className="text-center mt-8">

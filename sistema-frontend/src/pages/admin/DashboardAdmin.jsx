@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { getPedidos, getRepartidores, getVehiculos } from "../../services/dashboardService";
+import { getPedidos, getRepartidores, getVehiculos, getDetallesPedido } from "../../services/dashboardService";
 import DashboardHeader from "../../components/dashboard/DashboardHeader";
 import MetricsSection from "../../components/dashboard/MetricsSection";
 import OrdersByStatusChart from "../../components/dashboard/OrdersByStatusChart";
@@ -14,14 +14,16 @@ function DashboardAdmin() {
   const [pedidos, setPedidos] = useState([]);
   const [repartidores, setRepartidores] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
+  const [detalles, setDetalles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const cargarDatos = async () => {
     try {
-      const [p, r, v] = await Promise.all([getPedidos(), getRepartidores(), getVehiculos()]);
+      const [p, r, v, d] = await Promise.all([getPedidos(), getRepartidores(), getVehiculos(), getDetallesPedido()]);
       setPedidos(p);
       setRepartidores(r);
       setVehiculos(v);
+      setDetalles(d);
     } catch (err) {
       console.error("Error al cargar dashboard:", err);
     } finally {
@@ -33,7 +35,8 @@ function DashboardAdmin() {
 
   if (loading) return <LoadingSpinner />;
 
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoyDate = new Date();
+  const hoy = `${hoyDate.getFullYear()}-${String(hoyDate.getMonth() + 1).padStart(2, "0")}-${String(hoyDate.getDate()).padStart(2, "0")}`;
 
   const pedidosHoy = pedidos.filter(p => p.fechaRegistro === hoy);
   const pedidosPendientes = pedidos.filter(p => p.estadoPedido?.nombreEstado === "PENDIENTE");
@@ -66,7 +69,7 @@ function DashboardAdmin() {
         <OrdersByDayChart pedidos={pedidos} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TopProductsChart pedidos={pedidos} />
+        <TopProductsChart detalles={detalles} />
         <TopDriversTable pedidos={pedidos} repartidores={repartidores} />
       </div>
       <RecentOrdersTable pedidos={pedidos} />
