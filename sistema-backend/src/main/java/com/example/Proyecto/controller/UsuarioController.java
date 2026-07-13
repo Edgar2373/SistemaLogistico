@@ -1,5 +1,6 @@
 package com.example.Proyecto.controller;
 
+import com.example.Proyecto.dto.UsuarioUpdateDTO;
 import com.example.Proyecto.entity.Usuario;
 import com.example.Proyecto.service.UsuarioService;
 
@@ -35,9 +36,9 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public Usuario actualizar(
         @PathVariable Integer id,
-        @Valid @RequestBody Usuario usuario) {
+        @Valid @RequestBody UsuarioUpdateDTO dto) {
 
-        return usuarioService.actualizar(id, usuario);
+        return usuarioService.actualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")

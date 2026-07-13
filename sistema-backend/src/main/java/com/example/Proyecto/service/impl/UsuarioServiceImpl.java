@@ -1,6 +1,6 @@
 package com.example.Proyecto.service.impl;
 
-import com.example.Proyecto.config.PasswordConfig;
+import com.example.Proyecto.dto.UsuarioUpdateDTO;
 import com.example.Proyecto.entity.Usuario;
 import com.example.Proyecto.repository.UsuarioRepository;
 import com.example.Proyecto.service.UsuarioService;
@@ -38,19 +38,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario actualizar(Integer id, Usuario usuario) {
+    public Usuario actualizar(Integer id, UsuarioUpdateDTO dto) {
         Usuario existente = usuarioRepository.findById(id).orElse(null);
         if (existente != null) {
-            existente.setNombre(usuario.getNombre());
-            existente.setTelefono(usuario.getTelefono());
-            existente.setUsuario(usuario.getUsuario());
-            existente.setEmail(usuario.getEmail());
-            // Solo hashear si se envió una nueva contraseña
-            if (usuario.getPasswordHash() != null && !usuario.getPasswordHash().isEmpty()) {
-                existente.setPasswordHash(passwordEncoder.encode(usuario.getPasswordHash()));
+            existente.setNombre(dto.getNombre());
+            existente.setTelefono(dto.getTelefono());
+            existente.setUsuario(dto.getUsuario());
+            existente.setEmail(dto.getEmail());
+            if (dto.getPasswordHash() != null && !dto.getPasswordHash().isEmpty()) {
+                existente.setPasswordHash(passwordEncoder.encode(dto.getPasswordHash()));
             }
-            existente.setRol(usuario.getRol());
-            existente.setEstadoUsuario(usuario.getEstadoUsuario());
+            existente.setRol(dto.getRol());
+            existente.setEstadoUsuario(dto.getEstadoUsuario());
             return usuarioRepository.save(existente);
         }
         return null;

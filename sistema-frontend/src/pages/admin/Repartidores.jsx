@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { getRepartidores, crearRepartidor, actualizarRepartidor, eliminarRepartidor } from "../../services/repartidorService";
+import { getRepartidores, crearRepartidor, actualizarRepartidor } from "../../services/repartidorService";
 
 function Repartidores() {
   const [repartidores, setRepartidores] = useState([]);
   const [modalNuevo, setModalNuevo] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
   const [seleccionado, setSeleccionado] = useState(null);
+  const [filtroEstado, setFiltroEstado] = useState("");
   const [error, setError] = useState("");
 
   const cargar = async () => {
@@ -37,11 +37,11 @@ function Repartidores() {
     } catch (err) { console.error(err); }
   };
 
-  const handleEliminar = async () => {
-    try { await eliminarRepartidor(seleccionado.idRepartidor); setModalEliminar(false); setSeleccionado(null); cargar(); } catch (err) { console.error(err); }
-  };
-
   const coloresEstado = { DISPONIBLE: "bg-[#43A047]/10 text-[#43A047]", OCUPADO: "bg-[#FFA000]/10 text-[#FFA000]", INACTIVO: "bg-[#E53935]/10 text-[#E53935]" };
+
+  const repartidoresFiltrados = filtroEstado
+    ? repartidores.filter((r) => r.estadoRepartidor === filtroEstado)
+    : repartidores;
 
   return (
     <>
@@ -50,13 +50,28 @@ function Repartidores() {
           <h2 className="font-bold text-2xl sm:text-3xl text-on-surface">Gestión de Repartidores</h2>
           <p className="text-lg text-on-surface-variant mt-1">Administra los repartidores del sistema.</p>
         </div>
-        <button onClick={() => setModalNuevo(true)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-bold hover:opacity-90 shadow-sm">
-          <span className="material-symbols-outlined">add</span> Nuevo Repartidor
-        </button>
+        <div className="flex gap-2 sm:gap-4">
+          <div className="relative group">
+            <select
+              value={filtroEstado}
+              onChange={(e) => setFiltroEstado(e.target.value)}
+              className="appearance-none bg-surface border border-outline-variant rounded-lg px-3 py-4 pr-10 text-base font-medium focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+            >
+              <option value="">Todos los estados</option>
+              <option value="DISPONIBLE">Disponible</option>
+              <option value="OCUPADO">Ocupado</option>
+              <option value="INACTIVO">Inactivo</option>
+            </select>
+            <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">filter_list</span>
+          </div>
+          <button onClick={() => setModalNuevo(true)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-bold hover:opacity-90 shadow-sm">
+            <span className="material-symbols-outlined">add</span> Nuevo Repartidor
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {repartidores.map(r => (
+        {repartidoresFiltrados.map(r => (
           <div key={r.idRepartidor} className="bg-white border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-bold">R{r.idRepartidor}</div>
@@ -71,7 +86,6 @@ function Repartidores() {
             </div>
             <div className="flex gap-2 mt-3 pt-3 border-t border-outline-variant">
               <button onClick={() => { setSeleccionado(r); setModalEditar(true); }} className="flex-1 py-2 text-sm font-bold text-primary hover:bg-primary-fixed rounded-lg transition-colors">Editar</button>
-              <button onClick={() => { setSeleccionado(r); setModalEliminar(true); }} className="flex-1 py-2 text-sm font-bold text-error hover:bg-error-container rounded-lg transition-colors">Eliminar</button>
             </div>
           </div>
         ))}
@@ -86,7 +100,19 @@ function Repartidores() {
             </div>
             <form onSubmit={handleCrear} className="px-6 py-4 space-y-4">
               {error && <div className="bg-red-50 border border-red-300 text-red-700 text-sm rounded-lg p-3">{error}</div>}
-              <div><label className="block text-xs font-bold text-slate-500 mb-1">Licencia</label><input name="licencia" className="w-full border border-outline-variant rounded-lg p-2" placeholder="Ej. LIC-2026-001" required /></div>
+              <div><label className="block text-xs font-bold text-slate-500 mb-1">Tipo de Licencia</label>
+                <select name="licencia" className="w-full border border-outline-variant rounded-lg p-2" required>
+                  <option value="">Seleccione...</option>
+                  <option value="A-1">A-1 (Motos)</option>
+                  <option value="A-2A">A-2A (Autos particulares)</option>
+                  <option value="A-2B">A-2B (Taxis)</option>
+                  <option value="A-3A">A-3A (Camiones &lt; 4T)</option>
+                  <option value="A-3B">A-3B (Camiones &gt; 4T)</option>
+                  <option value="B-1">B-1 (Buses &lt; 8 pasajeros)</option>
+                  <option value="B-2">B-2 (Buses &gt; 8 pasajeros)</option>
+                  <option value="C-1">C-1 (Remolques)</option>
+                </select>
+              </div>
               <div><label className="block text-xs font-bold text-slate-500 mb-1">Estado</label>
                 <select name="estadoRepartidor" className="w-full border border-outline-variant rounded-lg p-2" required>
                   <option value="">Seleccione...</option>
@@ -113,7 +139,18 @@ function Repartidores() {
               <button onClick={() => { setModalEditar(false); setSeleccionado(null); }} className="text-on-surface-variant hover:bg-surface-variant rounded-full p-1"><span className="material-symbols-outlined">close</span></button>
             </div>
             <form onSubmit={handleActualizar} className="px-6 py-4 space-y-4">
-              <div><label className="block text-xs font-bold text-slate-500 mb-1">Licencia</label><input name="licencia" defaultValue={seleccionado.licencia} className="w-full border border-outline-variant rounded-lg p-2" /></div>
+              <div><label className="block text-xs font-bold text-slate-500 mb-1">Tipo de Licencia</label>
+                <select name="licencia" defaultValue={seleccionado.licencia} className="w-full border border-outline-variant rounded-lg p-2">
+                  <option value="A-1">A-1 (Motos)</option>
+                  <option value="A-2A">A-2A (Autos particulares)</option>
+                  <option value="A-2B">A-2B (Taxis)</option>
+                  <option value="A-3A">A-3A (Camiones &lt; 4T)</option>
+                  <option value="A-3B">A-3B (Camiones &gt; 4T)</option>
+                  <option value="B-1">B-1 (Buses &lt; 8 pasajeros)</option>
+                  <option value="B-2">B-2 (Buses &gt; 8 pasajeros)</option>
+                  <option value="C-1">C-1 (Remolques)</option>
+                </select>
+              </div>
               <div><label className="block text-xs font-bold text-slate-500 mb-1">Estado</label>
                 <select name="estadoRepartidor" defaultValue={seleccionado.estadoRepartidor} className="w-full border border-outline-variant rounded-lg p-2">
                   <option value="DISPONIBLE">Disponible</option>
@@ -131,19 +168,7 @@ function Repartidores() {
         </div>
       )}
 
-      {modalEliminar && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 text-center">
-            <div className="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center mx-auto mb-4"><span className="material-symbols-outlined text-4xl">warning</span></div>
-            <h3 className="text-xl font-bold">¿Eliminar repartidor?</h3>
-            <p className="text-on-surface-variant mt-2">Se eliminará el repartidor <strong>#{seleccionado?.idRepartidor}</strong> permanentemente.</p>
-            <div className="flex flex-col gap-2 mt-4">
-              <button onClick={handleEliminar} className="w-full py-3 rounded-lg font-bold bg-error text-on-error hover:opacity-90">Confirmar</button>
-              <button onClick={() => { setModalEliminar(false); setSeleccionado(null); }} className="w-full py-3 rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-low">Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </>
   );
 }

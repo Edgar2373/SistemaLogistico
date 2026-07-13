@@ -3,6 +3,7 @@ import { useState } from "react";
 function NuevoUsuarioModal({ visible, onClose, onGuardar }) {
   
   const [error, setError] = useState("");
+  const [rolSeleccionado, setRolSeleccionado] = useState("OPERADOR");
   if (!visible) return null;  
 
   const handleSubmit = (e) => {
@@ -74,7 +75,7 @@ function NuevoUsuarioModal({ visible, onClose, onGuardar }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-1">
               <label className="font-bold text-on-surface-variant">Rol Asignado</label>
-              <select name="rol" className="w-full border border-gray-500 rounded-lg focus:ring-primary focus:border-primary px-3 py-2">
+              <select name="rol" value={rolSeleccionado} onChange={(e) => setRolSeleccionado(e.target.value)} className="w-full border border-gray-500 rounded-lg focus:ring-primary focus:border-primary px-3 py-2">
                 <option value="OPERADOR">Operador</option>
                 <option value="REPARTIDOR">Repartidor</option>
                 <option value="ADMIN">Administrador</option>
@@ -90,7 +91,22 @@ function NuevoUsuarioModal({ visible, onClose, onGuardar }) {
               <label className="font-bold text-on-surface-variant">Teléfono (9 dígitos)</label>
               <input name="telefono" className="w-full border border-gray-500 rounded-lg focus:ring-primary focus:border-primary px-3 py-2" placeholder="987654321" type="text" maxLength={9} />
             </div>
-            <div></div>
+            {rolSeleccionado === "REPARTIDOR" && (
+              <div className="space-y-1">
+                <label className="font-bold text-on-surface-variant">Tipo de Licencia</label>
+                <select name="licencia" className="w-full border border-gray-500 rounded-lg focus:ring-primary focus:border-primary px-3 py-2" required>
+                  <option value="">Seleccione...</option>
+                  <option value="A-1">A-1 (Motos)</option>
+                  <option value="A-2A">A-2A (Autos particulares)</option>
+                  <option value="A-2B">A-2B (Taxis)</option>
+                  <option value="A-3A">A-3A (Camiones &lt; 4T)</option>
+                  <option value="A-3B">A-3B (Camiones &gt; 4T)</option>
+                  <option value="B-1">B-1 (Buses &lt; 8 pasajeros)</option>
+                  <option value="B-2">B-2 (Buses &gt; 8 pasajeros)</option>
+                  <option value="C-1">C-1 (Remolques)</option>
+                </select>
+              </div>
+            )}
           </div>
           <div className="pt-4 flex justify-end gap-2">
             <button type="button" onClick={onClose} className="px-3 py-2 rounded-lg font-bold border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">
