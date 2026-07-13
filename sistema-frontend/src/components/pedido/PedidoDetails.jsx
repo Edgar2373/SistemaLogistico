@@ -99,7 +99,7 @@ function PedidoDetails({ pedido, detalles = [], onCerrar }) {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                    </table>
                 </div>
               </div>
             )}

@@ -17,6 +17,7 @@ function PedidoForm({ onExito, onCancelar }) {
   const [detalles, setDetalles] = useState([]);
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [direccionSeleccion, setDireccionSeleccion] = useState("");
 
   useEffect(() => {
     const cargar = async () => {
@@ -58,6 +59,12 @@ function PedidoForm({ onExito, onCancelar }) {
 
   const eliminarDetalle = (index) => {
     setDetalles(detalles.filter((_, i) => i !== index));
+  };
+
+  const handleClienteChange = (e) => {
+    const id = Number(e.target.value);
+    const cliente = clientes.find(c => c.idCliente === id);
+    setDireccionSeleccion(cliente?.direccionPrincipal || "");
   };
 
   const totalGeneral = detalles.reduce((sum, d) => sum + (d.cantidad * d.precioUnitario), 0);
@@ -120,7 +127,7 @@ function PedidoForm({ onExito, onCancelar }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-500 mb-1">Cliente *</label>
-            <select name="idCliente" className="w-full border border-outline-variant rounded-lg p-2" required>
+            <select name="idCliente" onChange={handleClienteChange} className="w-full border border-outline-variant rounded-lg p-2" required>
               <option value="">Seleccione un cliente...</option>
               {clientes.map(c => (
                 <option key={c.idCliente} value={c.idCliente}>{c.nombre}</option>
@@ -129,7 +136,7 @@ function PedidoForm({ onExito, onCancelar }) {
           </div>
           <div>
             <label className="block text-xs font-bold text-slate-500 mb-1">Dirección de Entrega *</label>
-            <input name="direccionEntrega" className="w-full border border-outline-variant rounded-lg p-2" required placeholder="Av. Principal 123, Lima" />
+            <input name="direccionEntrega" value={direccionSeleccion} onChange={(e) => setDireccionSeleccion(e.target.value)} className="w-full border border-outline-variant rounded-lg p-2" required placeholder="Av. Principal 123, Lima" />
           </div>
         </div>
       </div>

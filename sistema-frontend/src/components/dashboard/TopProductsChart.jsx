@@ -1,21 +1,17 @@
 import { useMemo } from "react";
 
-function TopProductsChart({ pedidos }) {
+function TopProductsChart({ detalles }) {
   const productosVendidos = useMemo(() => {
     const conteo = {};
-    pedidos.forEach(p => {
-      if (p.detalles) {
-        p.detalles.forEach(d => {
-          const nombre = d.producto?.nombreProducto || "Producto";
-          conteo[nombre] = (conteo[nombre] || 0) + d.cantidad;
-        });
-      }
+    detalles.forEach(d => {
+      const nombre = d.producto?.nombreProducto || "Producto";
+      conteo[nombre] = (conteo[nombre] || 0) + d.cantidad;
     });
     return Object.entries(conteo)
       .map(([nombre, cantidad]) => ({ nombre, cantidad }))
       .sort((a, b) => b.cantidad - a.cantidad)
       .slice(0, 5);
-  }, [pedidos]);
+  }, [detalles]);
 
   const maxCantidad = Math.max(...productosVendidos.map(p => p.cantidad), 1);
 
