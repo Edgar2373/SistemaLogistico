@@ -67,10 +67,15 @@ function Usuarios() {
       estadoUsuario: "OPERATIVO",
     };
     try {
-      await crearUsuario(nuevoUsuario);
+      const usuarioCreado = await crearUsuario(nuevoUsuario);
       if (rol === "REPARTIDOR") {
         const licencia = formData.get("licencia");
-        await crearRepartidor({ licencia, estadoRepartidor: "DISPONIBLE", rendimientoPromedio: 0 });
+        await crearRepartidor({
+          licencia,
+          estadoRepartidor: "DISPONIBLE",
+          rendimientoPromedio: 0,
+          usuario: { idUsuario: usuarioCreado.idUsuario }
+        });
       }
       setModalNuevo(false);
       cargarUsuarios();

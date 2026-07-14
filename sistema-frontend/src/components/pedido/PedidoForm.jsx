@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { getClientes } from "../../services/clienteService";
 import { getProductos } from "../../services/productoService";
 import { getRepartidores } from "../../services/repartidorService";
-import { getVehiculos } from "../../services/vehiculoService";
 import { getRutas } from "../../services/rutaService";
 import { getEstadosPedido } from "../../services/estadoPedidoService";
 import { crearPedidoCompleto } from "../../services/pedidoService";
@@ -11,7 +10,6 @@ function PedidoForm({ onExito, onCancelar }) {
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
   const [repartidores, setRepartidores] = useState([]);
-  const [vehiculos, setVehiculos] = useState([]);
   const [rutas, setRutas] = useState([]);
   const [estados, setEstados] = useState([]);
   const [detalles, setDetalles] = useState([]);
@@ -22,13 +20,12 @@ function PedidoForm({ onExito, onCancelar }) {
   useEffect(() => {
     const cargar = async () => {
       try {
-        const [c, p, r, v, ru, e] = await Promise.all([
-          getClientes(), getProductos(), getRepartidores(), getVehiculos(), getRutas(), getEstadosPedido()
+        const [c, p, r, ru, e] = await Promise.all([
+          getClientes(), getProductos(), getRepartidores(), getRutas(), getEstadosPedido()
         ]);
         setClientes(c);
         setProductos(p);
         setRepartidores(r);
-        setVehiculos(v);
         setRutas(ru);
         setEstados(e);
       } catch (err) {
@@ -202,25 +199,14 @@ function PedidoForm({ onExito, onCancelar }) {
           <span className="material-symbols-outlined text-primary">local_shipping</span>
           Asignación Logística
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-500 mb-1">Repartidor *</label>
             <select name="idRepartidor" className="w-full border border-outline-variant rounded-lg p-2" required>
               <option value="">Seleccione...</option>
               {repartidores.filter(r => r.estadoRepartidor === "DISPONIBLE").map(r => (
                 <option key={r.idRepartidor} value={r.idRepartidor}>
-                  {r.licencia || `Rep #${r.idRepartidor}`}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-500 mb-1">Vehículo *</label>
-            <select name="idVehiculo" className="w-full border border-outline-variant rounded-lg p-2" required>
-              <option value="">Seleccione...</option>
-              {vehiculos.filter(v => v.estadoVehiculo === "ACTIVO").map(v => (
-                <option key={v.idVehiculo} value={v.idVehiculo}>
-                  {v.placa} - {v.tipo}
+                  {r.usuario?.nombre || `Rep #${r.idRepartidor}`}
                 </option>
               ))}
             </select>

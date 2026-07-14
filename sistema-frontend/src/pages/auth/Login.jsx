@@ -28,7 +28,7 @@ export default function Login() {
       }
     } catch (err) {
       const mensaje = err.response?.data?.error || "Error al conectar con el servidor";
-      setError(mensaje);
+      setError(mensaje === "Fuera de servicio" ? "Fuera de servicio — No puedes iniciar sesión" : mensaje);
     } finally {
       setCargando(false);
     }

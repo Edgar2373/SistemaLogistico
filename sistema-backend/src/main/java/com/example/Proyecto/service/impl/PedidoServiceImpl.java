@@ -58,6 +58,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    @Transactional
     public Pedido actualizar(Integer id, Pedido pedido) {
 
         Pedido pedidoExistente = pedidoRepository.findById(id).orElse(null);
@@ -79,7 +80,28 @@ public class PedidoServiceImpl implements PedidoService {
             pedidoExistente.setRuta(pedido.getRuta());
             pedidoExistente.setEstadoPedido(pedido.getEstadoPedido());
 
-            return pedidoRepository.save(pedidoExistente);
+            Pedido guardado = pedidoRepository.save(pedidoExistente);
+
+            if (pedido.getEstadoPedido() != null
+                    && "ENTREGADO".equals(pedido.getEstadoPedido().getNombreEstado())
+                    && pedidoExistente.getRepartidor() != null) {
+
+                Integer idRep = pedidoExistente.getRepartidor().getIdRepartidor();
+                List<Pedido> pedidosRepartidor = pedidoRepository.buscarPedidosPorRepartidor(idRep);
+                boolean todosCompletados = pedidosRepartidor.stream()
+                        .allMatch(p -> "ENTREGADO".equals(p.getEstadoPedido().getNombreEstado())
+                                || "CANCELADO".equals(p.getEstadoPedido().getNombreEstado()));
+
+                if (todosCompletados) {
+                    Repartidor repartidor = repartidorRepository.findById(idRep).orElse(null);
+                    if (repartidor != null) {
+                        repartidor.setEstadoRepartidor("DISPONIBLE");
+                        repartidorRepository.save(repartidor);
+                    }
+                }
+            }
+
+            return guardado;
         }
 
         return null;
