@@ -102,8 +102,6 @@ public class PedidoServiceImpl implements PedidoService {
         pedidoRepository.deleteById(id);
     }
 
-    
-    
     // JPQL
     @Override
     public List<Pedido> buscarPedidosPorEstado(String estado) {
@@ -121,8 +119,8 @@ public class PedidoServiceImpl implements PedidoService {
             LocalDate fechaFin) {
 
         return pedidoRepository.buscarPedidosEntreFechas(
-                        fechaInicio,
-                        fechaFin);
+                fechaInicio,
+                fechaFin);
     }
 
     @Override
@@ -155,30 +153,30 @@ public class PedidoServiceImpl implements PedidoService {
             if (detalle.getProducto() == null || detalle.getProducto().getIdProducto() == null) {
                 throw new RuntimeException("El detalle debe tener un producto asociado");
             }
-            
+
             Producto producto = productoRepository.findById(detalle.getProducto().getIdProducto())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-                    
+
             int nuevoStock = producto.getStock() - detalle.getCantidad();
             if (nuevoStock < 0) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombreProducto());
             }
-            
+
             // Actualizar stock del producto
             producto.setStock(nuevoStock);
             productoRepository.save(producto);
-            
+
             // Calcular subtotales usando el precio actual del producto
             double precioUnitario = producto.getPrecio().doubleValue();
             detalle.setPrecioUnitario(precioUnitario);
             double subtotal = detalle.getCantidad() * precioUnitario;
             detalle.setSubtotal(subtotal);
-            
+
             // Guardar detalle
             detalle.setPedido(pedidoGuardado);
             detalle.setProducto(producto);
             detallePedidoRepository.save(detalle);
-            
+
             totalBoleta += subtotal;
         }
 
@@ -194,7 +192,7 @@ public class PedidoServiceImpl implements PedidoService {
         Boleta boletaGuardada = boletaRepository.save(boleta);
 
         Pago pago = new Pago();
-        pago.setMetodoPago("TARJETA"); // O valor por defecto
+        pago.setMetodoPago("POR_DEFINIR"); // Definido luego vía Mercado Pago
         pago.setEstadoPago("PENDIENTE");
         pago.setFechaPago(LocalDate.now());
         pago.setReferenciaTransaccion("REF-" + System.currentTimeMillis());

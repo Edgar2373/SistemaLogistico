@@ -8,6 +8,7 @@ import PedidoForm from "../../components/pedido/PedidoForm";
 import PedidoDetails from "../../components/pedido/PedidoDetails";
 import StatusBadge from "../../components/common/StatusBadge";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import api from "../../api/axiosConfig";
 
 function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
@@ -33,12 +34,26 @@ function Pedidos() {
       });
       msg += `\nCosto envo: S/ ${pedido.costoEnvio?.toFixed(2) || "0.00"}`;
       const totalProductos = detalles.reduce((sum, d) => sum + (d.cantidad * d.precioUnitario), 0);
-      msg += `\nTotal: S/ ${(totalProductos + (pedido.costoEnvio || 0)).toFixed(2)}`;
-      msg += `\n\nFormas de pago:\n- Transferencia: ${EMPRESA_CONFIG.ctaBancaria}\n- Yape: ${EMPRESA_CONFIG.yape}\n- Plin: ${EMPRESA_CONFIG.plin}`;
-      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const totalMonto = totalProductos + (pedido.costoEnvio || 0);
+      msg += `\nTotal: S/ ${totalMonto.toFixed(2)}`;
+
+      try {
+        const res = await api.post("/pagos/generar-link", {
+          idPedido: pedido.idPedido,
+          monto: totalMonto,
+          cliente: cliente
+        });
+        
+        msg += `\n\nPuede realizar el pago seguro con tarjeta ingresando a este enlace: ${res.data.init_point}`;
+      } catch (e) {
+        console.error("El backend de Spring Boot rechazó la petición HTTP:", e.response?.status, e.response?.data || e.message);
+        msg += `\n\nFormas de pago:\n- Transferencia: ${EMPRESA_CONFIG.ctaBancaria}\n- Yape: ${EMPRESA_CONFIG.yape}\n- Plin: ${EMPRESA_CONFIG.plin}`;
+      }
+
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
       window.open(url, "_blank");
     } catch (err) {
-      console.error(err);
+      console.error("Error al generar link:", err);
     }
   };
 

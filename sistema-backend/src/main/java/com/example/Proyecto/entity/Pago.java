@@ -30,7 +30,6 @@ public class Pago {
     @Column(name = "id_pago")
     private Integer idPago;
 
-    @NotBlank(message = "El método de pago es obligatorio")
     @Column(name = "metodo_pago", length = 50)
     private String metodoPago;
 
