@@ -39,16 +39,17 @@ function Repartidores() {
 
   const coloresEstado = { DISPONIBLE: "bg-[#43A047]/10 text-[#43A047]", OCUPADO: "bg-[#FFA000]/10 text-[#FFA000]", INACTIVO: "bg-[#E53935]/10 text-[#E53935]" };
 
+  const repartidoresVinculados = repartidores.filter(r => r.usuario != null);
   const repartidoresFiltrados = filtroEstado
-    ? repartidores.filter((r) => r.estadoRepartidor === filtroEstado)
-    : repartidores;
+    ? repartidoresVinculados.filter((r) => r.estadoRepartidor === filtroEstado)
+    : repartidoresVinculados;
 
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
         <div>
-          <h2 className="font-bold text-2xl sm:text-3xl text-on-surface">Gestión de Repartidores</h2>
-          <p className="text-lg text-on-surface-variant mt-1">Administra los repartidores del sistema.</p>
+          <h2 className="font-bold text-2xl sm:text-3xl text-on-surface">Repartidores</h2>
+          <p className="text-lg text-on-surface-variant mt-1">Lista de repartidores vinculados a usuarios.</p>
         </div>
         <div className="flex gap-2 sm:gap-4">
           <div className="relative group">
@@ -64,9 +65,6 @@ function Repartidores() {
             </select>
             <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline">filter_list</span>
           </div>
-          <button onClick={() => setModalNuevo(true)} className="flex items-center gap-2 bg-primary text-on-primary px-4 py-3 rounded-lg font-bold hover:opacity-90 shadow-sm">
-            <span className="material-symbols-outlined">add</span> Nuevo Repartidor
-          </button>
         </div>
       </div>
 
@@ -74,9 +72,9 @@ function Repartidores() {
         {repartidoresFiltrados.map(r => (
           <div key={r.idRepartidor} className="bg-white border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-bold">R{r.idRepartidor}</div>
+              <div className="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-bold">{r.usuario?.nombre?.charAt(0).toUpperCase() || "R"}</div>
               <div>
-                <p className="font-bold text-on-surface">Repartidor #{r.idRepartidor}</p>
+                <p className="font-bold text-on-surface">{r.usuario?.nombre || `Repartidor #${r.idRepartidor}`}</p>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${coloresEstado[r.estadoRepartidor] || "bg-gray-100 text-gray-600"}`}>{r.estadoRepartidor}</span>
               </div>
             </div>

@@ -91,10 +91,10 @@ function Pagos() {
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div>
-          <h2 className="font-bold text-2xl sm:text-3xl text-on-surface">Gestión de Pagos</h2>
-          <p className="text-lg text-on-surface-variant mt-1">Adjunta la evidencia de pago para confirmar el pago.</p>
+          <h2 className="font-bold text-xl sm:text-2xl md:text-3xl text-on-surface">Gestión de Pagos</h2>
+          <p className="text-sm sm:text-base md:text-lg text-on-surface-variant mt-1">Adjunta la evidencia de pago para confirmar el pago.</p>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ function Pagos() {
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
-          className="bg-surface border border-outline-variant rounded-lg px-3 py-2.5 text-sm font-medium"
+          className="bg-surface border border-outline-variant rounded-lg px-3 py-2.5 text-sm font-medium w-full sm:w-auto"
         >
           <option value="">Todos los estados</option>
           <option value="PENDIENTE">Pendiente</option>
@@ -130,12 +130,12 @@ function Pagos() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-surface-container-low border-b border-outline-variant">
               <tr>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">ID</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Boleta</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Mtodo</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant">Estado</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant hidden md:table-cell">Fecha</th>
-                <th className="px-4 py-3 text-sm font-medium text-on-surface-variant text-right">Evidencia</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant">ID</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant hidden sm:table-cell">Boleta</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant">Método</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant">Estado</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant hidden md:table-cell">Fecha</th>
+                <th className="px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium text-on-surface-variant text-right">Evidencia</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/40">
@@ -143,14 +143,14 @@ function Pagos() {
                 <tr><td colSpan="6" className="px-4 py-8 text-center text-outline">No se encontraron pagos</td></tr>
               ) : (
                 filtrados.reverse().map(p => (
-                  <tr key={p.idPago} className="hover:bg-surface-container-lowest transition-colors h-12">
-                    <td className="px-4 py-3 text-sm font-semibold">#{p.idPago}</td>
-                    <td className="px-4 py-3 text-sm">BOL-000{p.boleta?.idBoleta || "-"}</td>
-                    <td className="px-4 py-3 text-sm">
+                  <tr key={p.idPago} className="hover:bg-surface-container-lowest transition-colors">
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold">#{p.idPago}</td>
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm hidden sm:table-cell">BOL-000{p.boleta?.idBoleta || "-"}</td>
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm">
                       <select
                         value={p.metodoPago || ""}
                         onChange={(e) => handleMetodoPago(p, e.target.value)}
-                        className="border border-outline-variant rounded px-2 py-1 text-xs font-medium bg-white"
+                        className="border border-outline-variant rounded px-1.5 sm:px-2 py-1 text-xs font-medium bg-white max-w-[90px] sm:max-w-none"
                         disabled={p.estadoPago === "PAGADO"}
                       >
                         <option value="">Seleccionar...</option>
@@ -159,18 +159,18 @@ function Pagos() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-sm">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${coloresEstado[p.estadoPago] || "bg-gray-100 text-gray-600"}`}>
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm">
+                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs font-medium ${coloresEstado[p.estadoPago] || "bg-gray-100 text-gray-600"}`}>
                         {p.estadoPago}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm hidden md:table-cell">{p.fechaPago || "-"}</td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end items-center gap-2">
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm hidden md:table-cell">{p.fechaPago || "-"}</td>
+                    <td className="px-2 sm:px-4 py-2.5 sm:py-3 text-right">
+                      <div className="flex justify-end items-center gap-1 sm:gap-2">
                         {p.urlEvidencia ? (
                           <div className="flex items-center gap-1">
                             <span className="text-[#43A047]">
-                              <span className="material-symbols-outlined text-xl">check_circle</span>
+                              <span className="material-symbols-outlined text-lg sm:text-xl">check_circle</span>
                             </span>
                             <a href={p.urlEvidencia} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
                               Ver foto
@@ -188,17 +188,17 @@ function Pagos() {
                             <button
                               onClick={() => fileInputRef.current[p.idPago]?.click()}
                               disabled={subiendo === p.idPago}
-                              className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-primary/20 transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1 bg-primary/10 text-primary px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-primary/20 transition-colors disabled:opacity-50"
                             >
                               {subiendo === p.idPago ? (
                                 <>
                                   <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
-                                  Subiendo...
+                                  <span className="hidden sm:inline">Subiendo...</span>
                                 </>
                               ) : (
                                 <>
                                   <span className="material-symbols-outlined text-sm">attach_file</span>
-                                  Adjuntar foto
+                                  <span className="hidden sm:inline">Adjuntar foto</span>
                                 </>
                               )}
                             </button>

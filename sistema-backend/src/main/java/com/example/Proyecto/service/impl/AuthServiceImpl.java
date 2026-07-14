@@ -4,8 +4,10 @@ package com.example.Proyecto.service.impl;
 import com.example.Proyecto.dto.AuthResponse;
 import com.example.Proyecto.dto.LoginRequest;
 import com.example.Proyecto.dto.RegisterRequest;
+import com.example.Proyecto.entity.Repartidor;
 import com.example.Proyecto.entity.Usuario;
 
+import com.example.Proyecto.repository.RepartidorRepository;
 import com.example.Proyecto.repository.UsuarioRepository;
 import com.example.Proyecto.security.JwtService;
 import com.example.Proyecto.service.AuthService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService{
 
     private final UsuarioRepository usuarioRepository;
+    private final RepartidorRepository repartidorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -38,7 +41,7 @@ public class AuthServiceImpl implements AuthService{
 
         String token = jwtService.generateToken(usuario.getUsuario());
 
-        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario());
+        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario(), null);
     }
 
     @Override
@@ -48,6 +51,9 @@ public class AuthServiceImpl implements AuthService{
                 .findByUsuario(request.getUsuario())
                 .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
 
+        if ("FUERA_DE_SERVICIO".equals(usuario.getEstadoUsuario())) {
+            throw new RuntimeException("Fuera de servicio");
+        }
 
         boolean passwordCorrecto = passwordEncoder.matches(
                 request.getPassword(),
@@ -60,6 +66,14 @@ public class AuthServiceImpl implements AuthService{
 
         String token = jwtService.generateToken(usuario.getUsuario());
 
-        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario());
+        Integer repartidorId = null;
+        if (usuario.getRol() != null && usuario.getRol().name().equals("REPARTIDOR")) {
+            Repartidor repartidor = repartidorRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
+            if (repartidor != null) {
+                repartidorId = repartidor.getIdRepartidor();
+            }
+        }
+
+        return new AuthResponse(token, usuario.getRol().name(), usuario.getNombre(), usuario.getIdUsuario(), repartidorId);
     }
 }

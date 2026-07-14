@@ -13,4 +13,5 @@ public class AuthResponse {
     private String rol;
     private String nombre;
     private Integer idUsuario;
+    private Integer repartidorId;
 }

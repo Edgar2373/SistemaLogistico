@@ -9,9 +9,10 @@ export function AuthProvider({ children }) {
     const rol = localStorage.getItem("rol");
     const nombre = localStorage.getItem("nombre");
     const idUsuario = localStorage.getItem("idUsuario");
+    const repartidorId = localStorage.getItem("repartidorId");
 
     if (token && rol && nombre && idUsuario) {
-      return { token, rol, nombre, idUsuario: Number(idUsuario) };
+      return { token, rol, nombre, idUsuario: Number(idUsuario), repartidorId: repartidorId ? Number(repartidorId) : null };
     }
     return null;
   });
@@ -21,7 +22,12 @@ export function AuthProvider({ children }) {
     localStorage.setItem("rol", data.rol);
     localStorage.setItem("nombre", data.nombre);
     localStorage.setItem("idUsuario", data.idUsuario);
-    setUser({ token: data.token, rol: data.rol, nombre: data.nombre, idUsuario: Number(data.idUsuario) });
+    if (data.repartidorId) {
+      localStorage.setItem("repartidorId", data.repartidorId);
+    } else {
+      localStorage.removeItem("repartidorId");
+    }
+    setUser({ token: data.token, rol: data.rol, nombre: data.nombre, idUsuario: Number(data.idUsuario), repartidorId: data.repartidorId || null });
   };
 
   const logout = () => {

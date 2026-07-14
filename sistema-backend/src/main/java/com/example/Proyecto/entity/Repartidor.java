@@ -1,8 +1,7 @@
 package com.example.Proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,6 @@ public class Repartidor {
     @Column(name = "id_repartidor")
     private Integer idRepartidor;
 
-    
     @Column(name = "licencia", length = 50)
     private String licencia;
 
@@ -30,5 +28,10 @@ public class Repartidor {
 
     @Column(name = "rendimiento_promedio")
     private Double rendimientoPromedio;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    @JsonIgnoreProperties({"passwordHash", "rol", "usuario", "email", "telefono", "estadoUsuario"})
+    private Usuario usuario;
 
 }
